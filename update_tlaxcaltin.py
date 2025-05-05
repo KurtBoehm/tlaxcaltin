@@ -4,9 +4,9 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-# Update tlaxcaltin in a project that uses it, with steps that are detailed later
+# Update Tlaxcaltin in a project that uses it, with steps that are detailed later
 # in this file. Note that this requires “subprojects.txt” to exist in the root folder
-# of the project using tlaxcaltin.
+# of the project using Tlaxcaltin.
 
 import re
 from pathlib import Path

@@ -34,7 +34,7 @@ parser = ArgumentParser(
     description="Test a wrap by downloading the source files, "
     "unpacking them in the packagecache subfolder, "
     "applying the patch directory, "
-    "and copying tlaxcaltin into the subproject’s packagefiles."
+    "and copying Tlaxcaltin into the subproject’s packagefiles."
 )
 parser.add_argument("wrap")
 args = parser.parse_args()
