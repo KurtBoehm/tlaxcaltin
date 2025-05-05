@@ -31,6 +31,29 @@ assert subprojects_path.name == "subprojects"
 project_path = subprojects_path.parent
 assert Path.cwd() == project_path
 
+
+def expand_selection(selection: set[str]):
+    new_selection: set[str] = set()
+    for s in selection:
+        new_selection.add(s)
+        p = subprojects_path / f"{s}.wrap"
+        with open(p, "r") as f:
+            txt = f.read()
+        dependencies_lines = [
+            line for line in txt.splitlines() if line.startswith("# dependencies: ")
+        ]
+        if len(dependencies_lines) == 0:
+            continue
+        dependencies = [
+            d.strip() for line in dependencies_lines for d in line[16:].split(",")
+        ]
+        new_selection = new_selection.union(dependencies)
+    if new_selection != selection:
+        new_selection = expand_selection(new_selection)
+        print(f"expanded selection: {new_selection}")
+    return new_selection
+
+
 url = "git@github.com:KurtBoehm/tlaxcaltin.git"
 
 selection_path = project_path / "subprojects.txt"
@@ -59,6 +82,7 @@ with TemporaryDirectory() as tmp_dir:
 
     # Remove all subprojects that are not desired
     if selection is not None:
+        selection = expand_selection(selection)
         fnames = {folder_names.get(entry, entry) for entry in selection}
 
         # Remove wraps and direct subfolders
