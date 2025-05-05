@@ -80,9 +80,10 @@ with TemporaryDirectory() as tmp_dir:
 
         # Remove patches
         patch_path = package_files_path / "patch"
-        for p in patch_path.iterdir():
-            if p.stem not in selection:
-                p.unlink()
+        if patch_path.exists():
+            for p in patch_path.iterdir():
+                if p.stem not in selection:
+                    p.unlink()
         if len(list(patch_path.iterdir())) == 0:
             patch_path.rmdir()
 
