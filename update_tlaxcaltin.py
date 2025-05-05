@@ -36,8 +36,10 @@ def expand_selection(selection: set[str]):
     new_selection: set[str] = set()
     for s in selection:
         new_selection.add(s)
-        p = subprojects_path / f"{s}.wrap"
-        with open(p, "r") as f:
+        wrap_path = subprojects_path / f"{s}.wrap"
+        if not wrap_path.exists():
+            continue
+        with open(wrap_path, "r") as f:
             txt = f.read()
         dependencies_lines = [
             line for line in txt.splitlines() if line.startswith("# dependencies: ")
