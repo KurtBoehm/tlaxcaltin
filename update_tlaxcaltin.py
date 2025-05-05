@@ -20,7 +20,7 @@ folder_names = {
     "google-benchmark": "benchmark",
     "gtest": "googletest",
     "liblzma": "xz",
-    "nlohmann-json": "json",
+    "nlohmann-json": "nlohmann_json",
     "sdl2": "SDL2",
     "suitesparse": "SuiteSparse",
     "xmp-toolkit-sdk": "XMP-Toolkit-SDK",

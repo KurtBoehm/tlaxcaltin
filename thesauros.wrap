@@ -4,9 +4,10 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-option(
-  'header-only',
-  type: 'boolean',
-  value: false,
-  description: 'enable header only mode and disable build for libfmt',
-)
+[wrap-git]
+url = git@github.com:KurtBoehm/thesauros.git
+revision = head
+clone-recursive = true
+
+[provide]
+thesauros = thesauros_dep

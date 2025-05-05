@@ -15,8 +15,8 @@
 /ginkgo-*/
 /googletest-*/
 /hypre-*/
-/json-*/
 /magic_enum-*/
+/nlohmann_json-*/
 /or-tools-*/
 /pcg-cpp-*/
 /preprocessor-boost-*/
