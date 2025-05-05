@@ -15,3 +15,8 @@ Attempts to use Tlaxcaltin as a Git subproject have failed in the past, necessit
 ## Licence
 
 Tlaxcaltin is licenced under the terms of the Mozilla Public Licence 2.0, which is provided in [`License`](License).
+There are some package files which are based on Meson wraps from the [Meson Wrap Database](https://github.com/mesonbuild/wrapdb), which are licenced under the MIT licence.
+The original licence is included in each affected folder with the name `LicenseWrapDB`.
+These are:
+
+- `fmt`
