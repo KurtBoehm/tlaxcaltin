@@ -84,8 +84,8 @@ with TemporaryDirectory() as tmp_dir:
             for p in patch_path.iterdir():
                 if p.stem not in selection:
                     p.unlink()
-        if len(list(patch_path.iterdir())) == 0:
-            patch_path.rmdir()
+            if len(list(patch_path.iterdir())) == 0:
+                patch_path.rmdir()
 
         # Clean up gitignore
         gitignore_path = subprojects_path / ".gitignore"
