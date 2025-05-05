@@ -7,7 +7,9 @@
 sources = files(
   '../common/tuklib_exit.c',
   '../common/tuklib_mbstr_fw.c',
+  '../common/tuklib_mbstr_nonprint.c',
   '../common/tuklib_mbstr_width.c',
+  '../common/tuklib_mbstr_wrap.c',
   '../common/tuklib_open_stdxxx.c',
   '../common/tuklib_progname.c',
   'args.c',
