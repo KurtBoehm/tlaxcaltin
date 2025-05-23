@@ -161,7 +161,5 @@ if optimization == '3'
   opt_optimization_args += optimization_args
 endif
 
-# All options
-all_opts = debug_opts
 # All arguments
 all_args = experimental_args + info_args + opt_warning_args + opt_optimization_args
