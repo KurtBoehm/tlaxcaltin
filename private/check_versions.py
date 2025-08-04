@@ -12,37 +12,44 @@ from pathlib import Path
 
 from colorama import Fore
 from github import Auth, Github
+from pydantic import BaseModel
 from requests import get
 from secretstorage import dbus_init, get_default_collection
 
+
+class Args(BaseModel):
+    user_name: str
+    password: str | None = None
+    skip_checksums: bool
+    names: list[str]
+
+
 parser = ArgumentParser(
-    description="Check whether the wraps use the most up-to-date version "
-    "available on GitHub."
+    description="Check whether the wraps use the most up-to-date version on GitHub."
 )
 parser.add_argument("--user-name", "-u", default="KurtBoehm")
 parser.add_argument("--password", "-p")
 parser.add_argument("--skip-checksums", "-c", action="store_true")
 parser.add_argument("names", nargs="*")
-args = parser.parse_args()
-names: set[str] | None = set(args.names) if len(args.names) > 0 else None
-user_name: str = args.user_name
-password: str | None = args.password
+args = Args.model_validate(vars(parser.parse_args()))
 
+password = args.password
 if password is None:
     with closing(dbus_init()) as connection:
         collection = get_default_collection(connection)
         [item] = [
             item
             for item in collection.get_all_items()
-            if item.get_label().startswith(f"GitHub {user_name}")
+            if item.get_label().startswith(f"GitHub {args.user_name}")
         ]
         password = item.get_secret().decode()
 
-gh = Github(auth=Auth.Login(user_name, password))
+gh = Github(auth=Auth.Login(args.user_name, password))
 del password
 
 
 tlaxcaltin = Path(__file__).parents[1]
+names = set(args.names) if len(args.names) > 0 else None
 for path in sorted(tlaxcaltin.iterdir()):
     if path.suffix != ".wrap":
         continue
