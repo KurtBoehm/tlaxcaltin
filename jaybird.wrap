@@ -4,7 +4,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-# dependencies: nlohmann-json, options, thesauros
+# dependencies: fmt, nlohmann-json, thesauros
 
 [wrap-git]
 url = git@github.com:KurtBoehm/jaybird.git

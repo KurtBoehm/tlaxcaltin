@@ -4,12 +4,14 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-# dependencies: fmt, liblzma, thesauros
+# no dependencies!
 
 [wrap-git]
-url = git@github.com:KurtBoehm/plazma.git
+url = git@github.com:KurtBoehm/contador.git
 revision = head
 clone-recursive = true
 
 [provide]
-plazma = plazma_dep
+contador = contador_dep
+contador-dummy = contador_dummy_dep
+contador-reduced = contador_reduced_dep
