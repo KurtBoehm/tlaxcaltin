@@ -4,4 +4,11 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-option('tests', type: 'feature', value: 'auto', description: 'Build unit tests')
+[wrap-git]
+url = https://github.com/ericniebler/range-v3.git
+revision = ca1388fb9da8e69314dda222dc7b139ca84e092f
+clone-recursive = true
+patch_directory = range-v3
+
+[provide]
+range-v3 = range_dep

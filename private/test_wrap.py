@@ -6,17 +6,18 @@
 
 from argparse import ArgumentParser
 from configparser import ConfigParser
-from dataclasses import dataclass
 from pathlib import Path
 from shutil import copy, copytree, unpack_archive
-from typing import Annotated
 
+from pydantic import BaseModel, Field
 from requests import get
-from verum import HyphenNameMapper, deserialize
 
 
-@dataclass
-class WrapFileSection:
+class Args(BaseModel):
+    wrap: str
+
+
+class WrapFileSection(BaseModel):
     directory: str
     source_url: str
     source_filename: str
@@ -24,20 +25,19 @@ class WrapFileSection:
     patch_directory: str
 
 
-@dataclass
-class FileWrap:
-    wrap_file: Annotated[WrapFileSection, HyphenNameMapper()]
+class FileWrap(BaseModel):
+    wrap_file: WrapFileSection = Field(alias="wrap-file")
     provide: dict[str, str]
 
 
 parser = ArgumentParser(
     description="Test a wrap by downloading the source files, "
-    "unpacking them in the packagecache subfolder, "
-    "applying the patch directory, "
-    "and copying Tlaxcaltin into the subproject’s packagefiles."
+    + "unpacking them in the packagecache subfolder, "
+    + "applying the patch directory, "
+    + "and copying Tlaxcaltin into the subproject’s packagefiles."
 )
 parser.add_argument("wrap")
-args = parser.parse_args()
+args = Args.model_validate(vars(parser.parse_args()))
 
 base_path = Path(__file__).parents[1]
 wrap_path = base_path / f"{args.wrap}.wrap"
@@ -46,7 +46,7 @@ with open(wrap_path, "r") as f:
     d.read_file(f)
     d = {s: dict(d.items(s)) for s in d.sections()}
 
-wrap = deserialize(d, FileWrap)
+wrap = FileWrap.model_validate(d)
 
 pkg_base_folder = base_path / "packagecache"
 pkg_base_folder.mkdir(exist_ok=True)
