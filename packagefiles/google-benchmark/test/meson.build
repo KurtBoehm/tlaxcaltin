@@ -1,3 +1,9 @@
+# This file is part of https://github.com/KurtBoehm/tlaxcaltin.
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 benchmark_tests = {
   'benchmark_test': '--benchmark_min_time=0.01',
   'spec_arg_test': '--benchmark_filter=BM_NotChosen',
