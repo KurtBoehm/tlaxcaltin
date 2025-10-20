@@ -7,7 +7,7 @@
 # dependencies: fmt, liblzma, thesauros
 
 [wrap-git]
-url = git@github.com:KurtBoehm/plazma.git
+url = https://github.com/KurtBoehm/plazma.git
 revision = head
 clone-recursive = true
 

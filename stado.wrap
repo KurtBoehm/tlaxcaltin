@@ -7,7 +7,7 @@
 # no dependencies!
 
 [wrap-git]
-url = git@github.com:KurtBoehm/stado.git
+url = https://github.com/KurtBoehm/stado.git
 revision = head
 clone-recursive = true
 

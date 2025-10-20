@@ -7,7 +7,7 @@
 # dependencies: thesauros, unordered_dense
 
 [wrap-git]
-url = git@github.com:KurtBoehm/mhd-io.git
+url = https://github.com/KurtBoehm/mhd-io.git
 revision = head
 clone-recursive = true
 

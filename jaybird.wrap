@@ -7,7 +7,7 @@
 # dependencies: fmt, nlohmann-json, thesauros
 
 [wrap-git]
-url = git@github.com:KurtBoehm/jaybird.git
+url = https://github.com/KurtBoehm/jaybird.git
 revision = head
 clone-recursive = true
 

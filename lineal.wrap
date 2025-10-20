@@ -7,7 +7,7 @@
 # dependencies: grex, thesauros, unordered_dense
 
 [wrap-git]
-url = git@github.com:KurtBoehm/lineal.git
+url = https://github.com/KurtBoehm/lineal.git
 revision = head
 clone-recursive = true
 

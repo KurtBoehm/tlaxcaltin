@@ -7,7 +7,7 @@
 # no dependencies!
 
 [wrap-git]
-url = git@github.com:KurtBoehm/contador.git
+url = https://github.com/KurtBoehm/contador.git
 revision = head
 clone-recursive = true
 
