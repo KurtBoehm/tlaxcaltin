@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tlaxcaltin"
+authors = [{ name = "Kurt Böhm", email = "kurbo96@gmail.com" }]
+description = "Meson subproject manager"
+requires-python = ">=3.11"
+dynamic = ["version"]
+
+[project.scripts]
+tlaxcaltin = "tlaxcaltin:run"
