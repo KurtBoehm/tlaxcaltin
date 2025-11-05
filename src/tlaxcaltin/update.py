@@ -80,6 +80,7 @@ def update(project_path: Path):
         run(["git", "clone", _tlax_url, "subprojects"], check=True)
         rmtree(subprojects_path / ".git")
         rmtree(subprojects_path / "private")
+        (subprojects_path / "pyproject.toml").unlink()
 
         # Remove all subprojects that are not desired
         if selection is not None:
