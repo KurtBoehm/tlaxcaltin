@@ -8,6 +8,7 @@ authors = [{ name = "Kurt Böhm", email = "kurbo96@gmail.com" }]
 description = "Meson subproject manager"
 requires-python = ">=3.11"
 dynamic = ["version"]
+dependencies = ["argcomplete", "pydantic"]
 
 [project.scripts]
 tlaxcaltin = "tlaxcaltin:run"
