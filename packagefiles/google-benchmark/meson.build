@@ -8,7 +8,7 @@ project(
   'benchmark',
   'cpp',
   version: '1.9.4',
-  default_options: ['cpp_std=c++14'],
+  default_options: ['cpp_std=c++17'],
   license: 'Apache-2.0',
 )
 
