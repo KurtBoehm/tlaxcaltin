@@ -47,9 +47,6 @@ else
     compile_args: fmt_interface_cpp_args,
     link_with: fmt_lib,
   )
-  if meson.version().version_compare('>=0.54.0')
-    meson.override_dependency('fmt', fmt_dep)
-  endif
   pkg_mod = import('pkgconfig')
   pkg_mod.generate(
     fmt_lib,
