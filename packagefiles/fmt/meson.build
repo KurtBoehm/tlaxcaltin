@@ -35,22 +35,20 @@ else
     override_options: 'cpp_std=c++14',
     include_directories: 'include',
     build_by_default: true,
-    install: true,
-  )
-  install_subdir(
-    'include',
-    strip_directory: true,
-    install_dir: get_option('includedir'),
+    install: not meson.is_subproject(),
   )
   fmt_dep = declare_dependency(
     include_directories: 'include',
     compile_args: fmt_interface_cpp_args,
     link_with: fmt_lib,
   )
-  pkg_mod = import('pkgconfig')
-  pkg_mod.generate(
-    fmt_lib,
-    name: 'fmt',
-    filebase: 'fmt',
-  )
+  if not meson.is_subproject()
+    install_subdir('include', strip_directory: true, install_dir: get_option('includedir'))
+    pc = import('pkgconfig')
+    pc.generate(
+      fmt_lib,
+      name: 'fmt',
+      filebase: 'fmt',
+    )
+  endif
 endif
