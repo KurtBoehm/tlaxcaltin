@@ -4,7 +4,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-project('meson-options')
+project('meson-options', 'cpp')
 
 # The warnings are based on those listed here:
 # https://github.com/lefticus/cppbestpractices/blob/master/02-Use_the_Tools_Available.md
