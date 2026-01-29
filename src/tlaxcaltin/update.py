@@ -98,7 +98,7 @@ def update(project_path: Path):
                 "[Tlaxcaltin](https://github.com/KurtBoehm/tlaxcaltin)",
             )
             readme = readme.splitlines()[: (4 if len(wrapdb_deps) > 0 else 1)]
-            readme += [f"- `{wdb}`" for wdb in wrapdb_deps]
+            readme += [f"- `{wdb}`" for wdb in sorted(wrapdb_deps)]
             readme = "\n".join(readme) + "\n"
             with open(readme_path, "w") as f:
                 f.write(readme)
