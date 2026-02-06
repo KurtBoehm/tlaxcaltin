@@ -12,3 +12,6 @@ dependencies = ["argcomplete", "pydantic"]
 
 [project.scripts]
 tlaxcaltin = "tlaxcaltin:run"
+
+[project.optional-dependencies]
+dev = ["colorama", "PyGithub", "requests", "secretstorage"]

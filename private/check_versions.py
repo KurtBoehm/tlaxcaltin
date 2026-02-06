@@ -7,6 +7,7 @@
 from argparse import ArgumentParser
 from configparser import ConfigParser
 from contextlib import closing
+import getpass
 from hashlib import sha256
 from pathlib import Path
 
@@ -37,12 +38,16 @@ password = args.password
 if password is None:
     with closing(dbus_init()) as connection:
         collection = get_default_collection(connection)
-        [item] = [
+        items = [
             item
             for item in collection.get_all_items()
             if item.get_label().startswith(f"GitHub {args.user_name}")
         ]
-        password = item.get_secret().decode()
+        if items:
+            [item] = items
+            password = item.get_secret().decode()
+        else:
+            password = getpass.getpass("Password: ")
 
 gh = Github(auth=Auth.Login(args.user_name, password))
 del password

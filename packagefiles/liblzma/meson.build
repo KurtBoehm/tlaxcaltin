@@ -8,7 +8,7 @@
 project(
   'liblzma',
   'c',
-  version: '5.8.1',
+  version: '5.8.2',
   license: 'pd/lgpl2/gpl2/gpl3',
 )
 
