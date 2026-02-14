@@ -1,0 +1,12 @@
+diff --git a/src/libscotchmetis/library_parmetis.h b/src/libscotchmetis/library_parmetis.h
+index 2ca4f1d..950ecd4 100644
+--- a/src/libscotchmetis/library_parmetis.h
++++ b/src/libscotchmetis/library_parmetis.h
+@@ -71,6 +71,7 @@
+ #define __parmetis_h__
+ 
+ #include <mpi.h>                                  /* Since ParMeTiS does it, do it too */
++#include <metis.h>
+ 
+ #endif /* __parmetis_h__ */
+ 

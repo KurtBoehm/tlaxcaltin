@@ -54,15 +54,12 @@ metis_lib = shared_library(
     'libmetis/util.c',
     'libmetis/wspace.c',
   ],
-  # TODO The index and real type are fixed
-  c_args: ['-DIDXTYPEWIDTH=64', '-DREALTYPEWIDTH=64'],
   include_directories: [include, include_directories('libmetis/')],
   dependencies: deps,
 )
 
 metis_dep = declare_dependency(
   link_with: metis_lib,
-  compile_args: ['-DIDXTYPEWIDTH=64', '-DREALTYPEWIDTH=64'],
   include_directories: include,
   dependencies: deps,
 )

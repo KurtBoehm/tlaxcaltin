@@ -30,8 +30,8 @@ scotchf_h_gen = custom_target(
 )
 
 ptdummysizes_exe = []
-ptscotch_h_gen   = []
-ptscotchf_h_gen  = []
+ptscotch_h_gen = []
+ptscotchf_h_gen = []
 if build_ptscotch
   ptdummysizes_exe = executable(
     'ptdummysizes',
@@ -104,8 +104,8 @@ scotch_src = [
     'arch_dist.c',
     'arch_hcub.c',
     'arch_mesh.c',
-    'arch_tleaf.c',
     'arch_sub.c',
+    'arch_tleaf.c',
     'arch_torus.c',
     'arch_vcmplt.c',
     'arch_vhcub.c',
@@ -120,8 +120,8 @@ scotch_src = [
     'bgraph_bipart_ml.c',
     'bgraph_bipart_st.c',
     'bgraph_bipart_zr.c',
-    'bgraph_cost.c',
     'bgraph_check.c',
+    'bgraph_cost.c',
     'bgraph_cost.c',
     'bgraph_store.c',
     'common.c',
@@ -151,7 +151,6 @@ scotch_src = [
     'graph_diam.c',
     'graph_dump.c',
     'graph_ielo.c',
-    'library_graph_induce.c',
     'graph_induce.c',
     'graph_io.c',
     'graph_io_chac.c',
@@ -216,9 +215,9 @@ scotch_src = [
     'library_common.c',
     'library_common_f.c',
     'library_context.c',
+    'library_context_f.c',
     'library_context_graph.c',
     'library_context_graph_f.c',
-    'library_context_f.c',
     'library_geom.c',
     'library_geom_f.c',
     'library_graph.c',
@@ -234,6 +233,7 @@ scotch_src = [
     'library_graph_diam_f.c',
     'library_graph_dump.c',
     'library_graph_f.c',
+    'library_graph_induce.c',
     'library_graph_io_chac.c',
     'library_graph_io_chac_f.c',
     'library_graph_io_habo.c',
@@ -312,8 +312,8 @@ scotch_src = [
     'vmesh_store.c',
     'wgraph.c',
     'wgraph_check.c',
-    'wgraph_part_fm.c',
     'wgraph_part_es.c',
+    'wgraph_part_fm.c',
     'wgraph_part_ml.c',
     'wgraph_part_rb.c',
     'wgraph_part_st.c',
@@ -369,7 +369,7 @@ if get_option('buildtype').startswith('debug')
   scotch_args += ['-DSCOTCH_DEBUG_ALL']
 endif
 
-zlib_dep  = dependency('zlib',  required: false)
+zlib_dep = dependency('zlib', required: false)
 if zlib_dep.found()
   scotch_args += ['-DCOMMON_FILE_COMPRESS_GZ']
   scotch_deps += [zlib_dep]
@@ -381,7 +381,7 @@ if bzip2_dep.found()
   scotch_deps += [bzip2_dep]
 endif
 
-lzma_dep  = dependency('liblzma', required: false)
+lzma_dep = dependency('liblzma', required: false)
 if lzma_dep.found()
   scotch_args += ['-DCOMMON_FILE_COMPRESS_LZMA']
   scotch_deps += [lzma_dep]
@@ -412,14 +412,14 @@ scotch_dep = declare_dependency(
 if build_ptscotch
   ptscotch_src = [
     files(
-      'arch_mpi.c',
       'arch_cmplt_mpi.c',
       'arch_cmpltw_mpi.c',
-      'arch_deco_mpi.c',
       'arch_deco2_mpi.c',
+      'arch_deco_mpi.c',
       'arch_dist_mpi.c',
       'arch_hcub_mpi.c',
       'arch_mesh_mpi.c',
+      'arch_mpi.c',
       'arch_sub_mpi.c',
       'arch_tleaf_mpi.c',
       'arch_vcmplt_mpi.c',
@@ -469,6 +469,7 @@ if build_ptscotch
       'dmesh_dgraph.c',
       'dmesh_io_load.c',
       'dorder.c',
+      'dorder_check.c',
       'dorder_gather.c',
       'dorder_io.c',
       'dorder_io_block.c',
@@ -541,11 +542,11 @@ if build_ptscotch
       'library_dgraph_stat_f.c',
       'library_dmapping.c',
       'library_dmesh.c',
-      'library_dmesh_f.c',
       'library_dmesh_build_adm.c',
       'library_dmesh_build_adm_f.c',
       'library_dmesh_dgraph.c',
       'library_dmesh_dgraph_f.c',
+      'library_dmesh_f.c',
       'library_dmesh_io_load.c',
       'library_dmesh_io_load_f.c',
       'library_dorder.c',

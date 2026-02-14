@@ -319,12 +319,6 @@ cholmod_src = [
   # 'Utility/t_cholmod_zeros.c',
 ]
 
-cholmod_inc = [
-  include_directories('Include'),
-  include_directories('SuiteSparse_metis/include'),
-  include_directories('SuiteSparse_metis/GKlib'),
-  include_directories('SuiteSparse_metis/libmetis'),
-]
 cholmod_deps = (
   base_deps
   + [
@@ -343,13 +337,18 @@ cholmod_lib = shared_library(
   'cholmod',
   cholmod_src,
   dependencies: cholmod_deps,
-  include_directories: cholmod_inc,
+  include_directories: [
+    include_directories('Include'),
+    include_directories('SuiteSparse_metis/include'),
+    include_directories('SuiteSparse_metis/GKlib'),
+    include_directories('SuiteSparse_metis/libmetis'),
+  ],
   version: '5',
 )
 
 cholmod_dep = declare_dependency(
   link_with: cholmod_lib,
-  include_directories: cholmod_inc,
+  include_directories: include_directories('Include'),
   dependencies: cholmod_deps,
   version: '5.3.4',
 )

@@ -12,6 +12,7 @@ source_url = https://gitlab.inria.fr/scotch/scotch/-/archive/v7.0.11/scotch-v7.0
 source_filename = scotch-v7.0.11.tar.gz
 source_hash = ce1ea6e16ca36ae91426a360f639c8f575fccebc0116fbcb381f164c5e862768
 patch_directory = scotch
+diff_files = patch/scotch.patch
 
 [provide]
 scotch = scotch_dep

@@ -11,6 +11,7 @@ url = https://github.com/KarypisLab/METIS.git
 revision = head
 clone-recursive = true
 patch_directory = metis
+diff_files = patch/metis.patch
 
 [provide]
 metis = metis_dep
