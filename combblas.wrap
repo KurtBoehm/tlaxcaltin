@@ -1,0 +1,18 @@
+# This file is part of https://github.com/KurtBoehm/tlaxcaltin.
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+# dependencies: mpi-cpp
+
+[wrap-file]
+directory = CombBLAS-2.0.0
+source_url = https://github.com/PASSIONLab/CombBLAS/archive/refs/tags/v2.0.0.tar.gz
+source_filename = CombBLAS-2.0.0.tar.gz
+source_hash = 632a94201a042a2a9aa86803f50ee38b7bf0aa1cfef6ba0eb34ea4007f79a679
+patch_directory = combblas
+diff_files = patch/combblas.patch
+
+[provide]
+combblas = combblas_dep

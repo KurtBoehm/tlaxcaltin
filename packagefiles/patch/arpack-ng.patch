@@ -1,0 +1,58 @@
+# This file is part of https://github.com/KurtBoehm/tlaxcaltin.
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+diff --git a/SRC/dneigh.f b/SRC/dneigh.f
+index 3c49e32..a852245 100644
+--- a/SRC/dneigh.f
++++ b/SRC/dneigh.f
+@@ -111,7 +111,7 @@ c     %------------------%
+ c     | Scalar Arguments |
+ c     %------------------%
+ c
+-      integer    ierr, n, ldh, ldq
++      integer    ierr, j, n, ldh, ldq
+       Double precision
+      &           rnorm
+ c
+diff --git a/SRC/sneigh.f b/SRC/sneigh.f
+index 7ffb486..5f08fe0 100644
+--- a/SRC/sneigh.f
++++ b/SRC/sneigh.f
+@@ -111,7 +111,7 @@ c     %------------------%
+ c     | Scalar Arguments |
+ c     %------------------%
+ c
+-      integer    ierr, n, ldh, ldq
++      integer    ierr, j, n, ldh, ldq
+       Real
+      &           rnorm
+ c
+diff --git a/UTIL/icnteq.f b/UTIL/icnteq.f
+index dc345f9..288b1f8 100644
+--- a/UTIL/icnteq.f
++++ b/UTIL/icnteq.f
+@@ -5,7 +5,7 @@ c     Count the number of elements equal to a specified integer value.
+ c
+       integer function icnteq (n, array, value)
+ c
+-      integer    n, value
++      integer    i, k, n, value
+       integer    array(*)
+ c
+       k = 0
+diff --git a/UTIL/iset.f b/UTIL/iset.f
+index cb690bc..598b29e 100644
+--- a/UTIL/iset.f
++++ b/UTIL/iset.f
+@@ -5,7 +5,7 @@ c     Only work with increment equal to 1 right now.
+ c
+       subroutine iset (n, value, array, inc)
+ c
+-      integer    n, value, inc
++      integer    i, n, value, inc
+       integer    array(*)
+ c
+       do 10 i = 1, n

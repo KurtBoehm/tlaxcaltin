@@ -1,0 +1,17 @@
+# This file is part of https://github.com/KurtBoehm/tlaxcaltin.
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+# dependencies: mpi-c, metis, parmetis, scotch, suitesparse
+
+[wrap-file]
+directory = dune-common-2.11.0
+source_url = https://dune-project.org/download/2.11.0/dune-common-2.11.0.tar.gz
+source_filename = dune-common-2.11.0.tar.gz
+source_hash = 78a0059e878fd4c5a27734fe9073fc86a24b0c8402a924fa8b723c1b66d1e19a
+patch_directory = dune-common
+
+[provide]
+dune-common = dune_common_dep

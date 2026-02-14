@@ -1,0 +1,17 @@
+# This file is part of https://github.com/KurtBoehm/tlaxcaltin.
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+# dependencies: liblzma, mpi-c
+
+[wrap-file]
+directory = scotch-v7.0.11
+source_url = https://gitlab.inria.fr/scotch/scotch/-/archive/v7.0.11/scotch-v7.0.11.tar.gz
+source_filename = scotch-v7.0.11.tar.gz
+source_hash = ce1ea6e16ca36ae91426a360f639c8f575fccebc0116fbcb381f164c5e862768
+patch_directory = scotch
+
+[provide]
+scotch = scotch_dep

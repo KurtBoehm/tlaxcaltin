@@ -1,0 +1,78 @@
+# This file is part of https://github.com/KurtBoehm/tlaxcaltin.
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+# Level of determinism in Scotch
+option(
+  'scotch_deterministic',
+  type: 'combo',
+  choices: ['none', 'fixed_seed', 'full'],
+  value: 'none',
+  yield: true,
+)
+
+# Set integer size: by default, use compiler int size
+option(
+  'int_size',
+  type: 'integer',
+  value: 0,
+  description: 'Integer size: empty string stands for C compiler int type size',
+)
+
+# Thread support
+option(
+  'threads',
+  type: 'boolean',
+  value: true,
+  description: 'Use multi-threading in Scotch and PT-Scotch',
+)
+
+# Force MPI with threads
+option(
+  'force_mpi_multithread',
+  type: 'boolean',
+  value: false,
+  description: 'Force using multi-threaded MPI in PT-Scotch',
+)
+
+# Build PT-Scotch
+option(
+  'build_ptscotch',
+  type: 'boolean',
+  value: true,
+  description: 'Build PT-Scotch',
+)
+
+# Build libESMUMPS
+option(
+  'build_libesmumps',
+  type: 'boolean',
+  value: true,
+  description: 'Build EsMUMPS library',
+)
+
+# Build libScotchMeTiS
+option(
+  'build_libscotchmetis',
+  type: 'boolean',
+  value: true,
+  description: 'Build ScotchMeTiS library',
+)
+
+# Install our MeTiS header stubs
+option(
+  'install_metis_headers',
+  type: 'boolean',
+  value: true,
+  description: 'Install libScotchMeTiS headers in destination directory',
+)
+
+# The name suffix
+option(
+  'name_suffix',
+  type: 'string',
+  value: '',
+  description: 'The name suffix for Scotch and PT-Scotch',
+)

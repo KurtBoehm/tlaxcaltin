@@ -1,0 +1,32 @@
+# This file is part of https://github.com/KurtBoehm/tlaxcaltin.
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+diff --git a/Applications/BipartiteMatchings/ApproxWeightPerfectMatching.h b/Applications/BipartiteMatchings/ApproxWeightPerfectMatching.h
+index 745558b..a848847 100644
+--- a/Applications/BipartiteMatchings/ApproxWeightPerfectMatching.h
++++ b/Applications/BipartiteMatchings/ApproxWeightPerfectMatching.h
+@@ -389,7 +389,7 @@ void UpdateMatching(FullyDistVec<IT, IT>& mateRow2Col, FullyDistVec<IT, IT>& mat
+ 
+ 
+ 
+-int ThreadBuffLenForBinning(int itemsize, int nbins)
++inline int ThreadBuffLenForBinning(int itemsize, int nbins)
+ {
+     // 1MB shared cache (per 2 cores) in KNL
+ #ifndef L2_CACHE_SIZE
+diff --git a/Applications/BipartiteMatchings/BPMaximalMatching.h b/Applications/BipartiteMatchings/BPMaximalMatching.h
+index 365b7c7..bdf2449 100644
+--- a/Applications/BipartiteMatchings/BPMaximalMatching.h
++++ b/Applications/BipartiteMatchings/BPMaximalMatching.h
+@@ -14,7 +14,7 @@
+ #define GREEDY 1
+ #define KARP_SIPSER 2
+ #define DMD 3
+-MTRand GlobalMT(123); // for reproducible result
++inline MTRand GlobalMT(123); // for reproducible result
+ 
+ namespace combblas {
+ 

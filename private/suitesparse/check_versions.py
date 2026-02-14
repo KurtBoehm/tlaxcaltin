@@ -14,32 +14,32 @@ sub_re = re.compile(r"set \( .*_VERSION_SUB *(\d*)( CACHE STRING \"\" FORCE)? \)
 meson_re = re.compile(r"version *: *'([^']*)'")
 
 parser = ArgumentParser(
-    description="Compare the versions of the SuiteSparse packages "
-    "specified in the CMakeLists.txt files to those in the meson file "
-    "and list those which differ."
+    description=(
+        "Compare the versions of the SuiteSparse packages "
+        "specified in the CMakeLists.txt files to those in the meson file "
+        "and list those which differ."
+    )
 )
 parser.add_argument("project", type=Path)
 args = parser.parse_args()
 project: Path = args.project
 
-for folder in sorted(args.project.iterdir()):
+for folder in sorted(project.iterdir()):
     meson_path = folder / "meson.build"
     cmake_path = folder / "CMakeLists.txt"
     if not meson_path.exists() or not cmake_path.exists():
         continue
-    # print(folder)
 
-    with open(cmake_path, "r") as f:
-        cmake = f.read()
+    cmake = cmake_path.read_text(encoding="utf-8")
     [major] = major_re.findall(cmake)
     [minor] = minor_re.findall(cmake)
     [sub] = sub_re.findall(cmake)
+    major, minor, sub = major[0], minor[0], sub[0]
     version = f"{major}.{minor}.{sub}"
 
-    with open(meson_path, "r") as f:
-        meson = f.read()
+    meson = meson_path.read_text(encoding="utf-8")
     versions: list[str] = meson_re.findall(meson)
     wrong = [v for v in versions if v not in (version, major)]
 
     if len(wrong) > 0:
-        print(folder, wrong)
+        print(f"{folder}: {wrong=} {version=}")

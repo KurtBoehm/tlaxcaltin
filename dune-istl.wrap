@@ -1,0 +1,18 @@
+# This file is part of https://github.com/KurtBoehm/tlaxcaltin.
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+# dependencies: arpackpp, dune-common, superlu
+
+[wrap-file]
+directory = dune-istl-2.11.0
+source_url = https://dune-project.org/download/2.11.0/dune-istl-2.11.0.tar.gz
+source_filename = dune-istl-2.11.0.tar.gz
+source_hash = d34a0b14734183e94c9b1b0f8839548b90e5015675d14af16d9eed46b6b68823
+patch_directory = dune-istl
+diff_files = patch/dune-istl.patch
+
+[provide]
+dune-istl = dune_istl_dep

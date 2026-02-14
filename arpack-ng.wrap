@@ -1,0 +1,16 @@
+# This file is part of https://github.com/KurtBoehm/tlaxcaltin.
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+[wrap-file]
+directory = arpack-ng-3.9.1
+source_url = https://github.com/opencollab/arpack-ng/archive/refs/tags/3.9.1.tar.gz
+source_filename = arpack-ng-3.9.1.tar.gz
+source_hash = f6641deb07fa69165b7815de9008af3ea47eb39b2bb97521fbf74c97aba6e844
+patch_directory = arpack-ng
+diff_files = patch/arpack-ng.patch
+
+[provide]
+arpack-ng = arpack_ng_dep

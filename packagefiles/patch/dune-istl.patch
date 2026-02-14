@@ -1,0 +1,39 @@
+# This file is part of https://github.com/KurtBoehm/tlaxcaltin.
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+diff --git a/dune/istl/ldl.hh b/dune/istl/ldl.hh
+index ce56f88..290f4e6 100644
+--- a/dune/istl/ldl.hh
++++ b/dune/istl/ldl.hh
+@@ -11,13 +11,8 @@
+ #include <memory>
+ #include <type_traits>
+ 
+-#ifdef __cplusplus
+-extern "C"
+-{
+ #include <ldl.h>
+ #include <amd.h>
+-}
+-#endif
+ 
+ #include <dune/common/exceptions.hh>
+ 
+diff --git a/dune/istl/repartition.hh b/dune/istl/repartition.hh
+index c3041b6..6ebd8e4 100644
+--- a/dune/istl/repartition.hh
++++ b/dune/istl/repartition.hh
+@@ -14,10 +14,7 @@
+ // Explicitly use C linkage as scotch does not extern "C" in its headers.
+ // Works because ParMETIS/METIS checks whether compiler is C++ and otherwise
+ // does not use extern "C". Therefore no nested extern "C" will be created.
+-extern "C"
+-{
+ #include <parmetis.h>
+-}
+ #endif
+ 
+ #include <dune/common/timer.hh>

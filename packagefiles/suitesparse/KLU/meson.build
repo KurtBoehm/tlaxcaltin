@@ -1,0 +1,82 @@
+# This file is part of https://github.com/KurtBoehm/tlaxcaltin.
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+klu_src = [
+  'Source/klu_analyze.c',
+  'Source/klu_analyze_given.c',
+  'Source/klu.c',
+  'Source/klu_defaults.c',
+  'Source/klu_diagnostics.c',
+  'Source/klu_dump.c',
+  'Source/klu_extract.c',
+  'Source/klu_factor.c',
+  'Source/klu_free_numeric.c',
+  'Source/klu_free_symbolic.c',
+  'Source/klu_kernel.c',
+  'Source/klu_memory.c',
+  'Source/klu_refactor.c',
+  'Source/klu_scale.c',
+  'Source/klu_solve.c',
+  'Source/klu_sort.c',
+  'Source/klu_tsolve.c',
+  'Source/klu_l_analyze.c',
+  'Source/klu_l_analyze_given.c',
+  'Source/klu_l.c',
+  'Source/klu_l_defaults.c',
+  'Source/klu_l_diagnostics.c',
+  'Source/klu_l_dump.c',
+  'Source/klu_l_extract.c',
+  'Source/klu_l_factor.c',
+  'Source/klu_l_free_numeric.c',
+  'Source/klu_l_free_symbolic.c',
+  'Source/klu_l_kernel.c',
+  'Source/klu_l_memory.c',
+  'Source/klu_l_refactor.c',
+  'Source/klu_l_scale.c',
+  'Source/klu_l_solve.c',
+  'Source/klu_l_sort.c',
+  'Source/klu_l_tsolve.c',
+  'Source/klu_z.c',
+  'Source/klu_z_diagnostics.c',
+  'Source/klu_z_dump.c',
+  'Source/klu_z_extract.c',
+  'Source/klu_z_factor.c',
+  'Source/klu_z_free_numeric.c',
+  'Source/klu_z_kernel.c',
+  'Source/klu_z_refactor.c',
+  'Source/klu_z_scale.c',
+  'Source/klu_z_solve.c',
+  'Source/klu_z_sort.c',
+  'Source/klu_z_tsolve.c',
+  'Source/klu_zl.c',
+  'Source/klu_zl_diagnostics.c',
+  'Source/klu_zl_dump.c',
+  'Source/klu_zl_extract.c',
+  'Source/klu_zl_factor.c',
+  'Source/klu_zl_free_numeric.c',
+  'Source/klu_zl_kernel.c',
+  'Source/klu_zl_refactor.c',
+  'Source/klu_zl_scale.c',
+  'Source/klu_zl_solve.c',
+  'Source/klu_zl_sort.c',
+  'Source/klu_zl_tsolve.c',
+]
+klu_inc = include_directories('Include')
+
+klu_lib = shared_library(
+  'klu',
+  klu_src,
+  dependencies: base_deps + [config_dep, amd_dep, btf_dep, colamd_dep],
+  include_directories: klu_inc,
+  version: '2',
+)
+
+klu_dep = declare_dependency(
+  link_with: klu_lib,
+  include_directories: klu_inc,
+  dependencies: base_deps + [config_dep, amd_dep, btf_dep, colamd_dep],
+  version: '2.3.6',
+)

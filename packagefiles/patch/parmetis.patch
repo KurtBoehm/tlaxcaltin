@@ -1,0 +1,48 @@
+# This file is part of https://github.com/KurtBoehm/tlaxcaltin.
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+diff --git a/libparmetis/gkmpi.c b/libparmetis/gkmpi.c
+index 7147cc5..4b037bf 100644
+--- a/libparmetis/gkmpi.c
++++ b/libparmetis/gkmpi.c
+@@ -227,8 +227,8 @@ int gkMPI_Alltoallv(void *sendbuf, idx_t *sendcounts,
+   return MPI_Alltoallv(sendbuf, sendcounts, sdispls, sendtype, 
+                recvbuf, recvcounts, rdispls, recvtype, comm);
+ #else
+-  return MPI_Alltoallv_c(sendbuf, sendcounts, sdispls, sendtype, 
+-               recvbuf, recvcounts, rdispls, recvtype, comm);
++  return MPI_Alltoallv_c(sendbuf, (const MPI_Count *)sendcounts, sdispls, sendtype, 
++               recvbuf, (const MPI_Count *)recvcounts, rdispls, recvtype, comm);
+ #endif
+ #endif
+ }
+@@ -279,7 +279,7 @@ int gkMPI_Allgatherv(void *sendbuf, idx_t sendcount, MPI_Datatype sendtype,
+                recvcounts, rdispls, recvtype, comm);
+ #else
+   return MPI_Allgatherv_c(sendbuf, sendcount, sendtype, recvbuf, 
+-               recvcounts, rdispls, recvtype, comm);
++               (const MPI_Count *)recvcounts, rdispls, recvtype, comm);
+ #endif
+ #endif
+ }
+@@ -329,7 +329,7 @@ int gkMPI_Scatterv(void *sendbuf, idx_t *sendcounts, idx_t *sdispls,
+   return MPI_Scatterv(sendbuf, sendcounts, sdispls, sendtype, 
+                recvbuf, recvcount, recvtype, root, comm);
+ #else
+-  return MPI_Scatterv_c(sendbuf, sendcounts, sdispls, sendtype, 
++  return MPI_Scatterv_c(sendbuf, (const MPI_Count *)sendcounts, sdispls, sendtype, 
+                recvbuf, recvcount, recvtype, root, comm);
+ #endif
+ #endif
+@@ -382,7 +382,7 @@ int gkMPI_Gatherv(void *sendbuf, idx_t sendcount, MPI_Datatype sendtype,
+                recvcounts, rdispls, recvtype, root, comm);
+ #else
+   return MPI_Gatherv_c(sendbuf, sendcount, sendtype, recvbuf, 
+-               recvcounts, rdispls, recvtype, root, comm);
++               (const MPI_Count *)recvcounts, rdispls, recvtype, root, comm);
+ #endif
+ #endif
+ }
