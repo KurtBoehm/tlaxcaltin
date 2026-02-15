@@ -9,9 +9,9 @@ project(
   'c',
 )
 
-include = include_directories('.')
-
 m_dep = meson.get_compiler('c').find_library('m', required: false)
+
+gk_inc = include_directories('include')
 
 gk_lib = shared_library(
   'GKlib',
@@ -42,11 +42,11 @@ gk_lib = shared_library(
     'src/timers.c',
     'src/tokenizer.c',
   ],
-  include_directories: [include],
+  include_directories: [gk_inc],
   dependencies: [m_dep],
 )
 
 gklib_dep = declare_dependency(
   link_with: gk_lib,
-  include_directories: include,
+  include_directories: gk_inc,
 )

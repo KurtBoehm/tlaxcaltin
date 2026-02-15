@@ -8,9 +8,10 @@ import subprocess
 from argparse import ArgumentParser
 from configparser import ConfigParser
 from pathlib import Path
-from shutil import copy, copytree, unpack_archive
+from shutil import copy, copytree, rmtree, unpack_archive
+from subprocess import run
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, TypeAdapter
 from requests import get
 
 
@@ -18,18 +19,35 @@ class Args(BaseModel):
     wrap: str
 
 
-class WrapFileSection(BaseModel):
-    directory: str
-    source_url: str
-    source_filename: str
-    source_hash: str
+class WrapSection(BaseModel):
+    directory: str | None = None
     patch_directory: str
     diff_files: str | None = None
 
 
+class WrapFileSection(WrapSection):
+    source_url: str
+    source_filename: str
+    source_hash: str
+
+
+class WrapGitSection(WrapSection):
+    url: str
+    revision: str
+    clone_recursive: bool = Field(alias="clone-recursive")
+
+
 class FileWrap(BaseModel):
-    wrap_file: WrapFileSection = Field(alias="wrap-file")
+    wrap_body: WrapFileSection = Field(alias="wrap-file")
     provide: dict[str, str]
+
+
+class GitWrap(BaseModel):
+    wrap_body: WrapGitSection = Field(alias="wrap-git")
+    provide: dict[str, str]
+
+
+Wrap = FileWrap | GitWrap
 
 
 parser = ArgumentParser(
@@ -49,32 +67,52 @@ with open(wrap_path, "r") as f:
     d.read_file(f)
     d = {s: dict(d.items(s)) for s in d.sections()}
 
-wrap = FileWrap.model_validate(d)
+wrap = TypeAdapter(Wrap).validate_python(d)
+assert isinstance(wrap, Wrap)
+body = wrap.wrap_body
+directory = body.directory if body.directory else wrap_path.stem
 
 pkg_base_folder = base_path / "packagecache"
 pkg_base_folder.mkdir(exist_ok=True)
-
-cmp_path = pkg_base_folder / wrap.wrap_file.source_filename
-if not cmp_path.exists():
-    data = get(wrap.wrap_file.source_url).content
-    with open(cmp_path, "wb") as f:
-        f.write(data)
-
-unpack_archive(cmp_path, pkg_base_folder)
-pkg_folder = pkg_base_folder / wrap.wrap_file.directory
+pkg_folder = pkg_base_folder / directory
 print(pkg_folder)
 
+match body:
+    case WrapFileSection():
+        cmp_path = pkg_base_folder / body.source_filename
+        if not cmp_path.exists():
+            data = get(body.source_url).content
+            with open(cmp_path, "wb") as f:
+                f.write(data)
+
+        unpack_archive(cmp_path, pkg_base_folder)
+    case WrapGitSection():
+        if pkg_folder.exists():
+            rmtree(pkg_folder)
+        clone_cmd = [
+            "git",
+            "clone",
+            *(["--recurse-submodules"] if body.clone_recursive else []),
+            body.url,
+            pkg_folder,
+        ]
+        run(clone_cmd)
+
+        if body.revision.lower() != "head":
+            run(["git", "checkout", body.revision], cwd=pkg_folder)
+
 # Apply patch directory
-patch_base_path = base_path / "packagefiles" / wrap.wrap_file.patch_directory
+patch_base_path = base_path / "packagefiles" / body.patch_directory
 for p in patch_base_path.iterdir():
     outp = pkg_folder / p.name
+    print(f"Copy {p} to {outp}")
     if p.is_dir():
         copytree(p, outp, dirs_exist_ok=True)
     else:
         copy(p, outp)
 
 # Apply diff files (patches)
-if wrap.wrap_file.diff_files and (diff_files_str := wrap.wrap_file.diff_files.strip()):
+if body.diff_files and (diff_files_str := body.diff_files.strip()):
     diff_files = diff_files_str.split(",")
     for rel_diff in diff_files:
         diff_path = base_path / "packagefiles" / rel_diff
