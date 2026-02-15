@@ -1,0 +1,5 @@
+option('mixedint', type: 'boolean', value: false)
+option('bigint', type: 'boolean', value: false)
+option('single', type: 'boolean', value: false)
+option('long_double', type: 'boolean', value: false)
+option('complex', type: 'boolean', value: false)
