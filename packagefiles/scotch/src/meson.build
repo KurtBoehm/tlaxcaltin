@@ -92,9 +92,7 @@ if build_ptscotch
         return (prov < MPI_THREAD_MULTIPLE) ? EXIT_FAILURE : EXIT_SUCCESS;
       }
     '''
-    has_mpi_multithread = (
-      cc.run(test_program, dependencies: [mpi_dep, threads_dep]).returncode() == 0
-    )
+    has_mpi_multithread = cc.run(test_program, dependencies: [mpi_dep, threads_dep]).returncode() == 0
     if force_mpi_multithread
       assert(has_mpi_multithread, 'Multithreaded MPI does not seem to work!')
     endif
