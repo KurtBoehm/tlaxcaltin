@@ -11,6 +11,19 @@ project(
   version: '1.11.0',
 )
 
+hwloc_dep = dependency('hwloc', required: false)
+metis_dep = dependency('metis')
+omp_dep = dependency('OpenMP')
+
+with_mpi = get_option('mpi_implementation') != 'none'
+if with_mpi
+  mpi_sub = subproject('mpi-c')
+  mpi_dep = mpi_sub.get_variable('mpi_dep')
+  mpirun = mpi_sub.get_variable('mpirun')
+else
+  mpi_dep = []
+endif
+
 code = '''
 #include <type_traits>
 #include <cstddef>
@@ -40,8 +53,8 @@ cfg = {
   # TODO Make generic?
   'METIS_HEADER': 'metis.h',
   'GINKGO_HAVE_ROCTX': false,
-  'GINKGO_BUILD_MPI': true,
-  'GINKGO_HAVE_HWLOC': true,
+  'GINKGO_BUILD_MPI': with_mpi,
+  'GINKGO_HAVE_HWLOC': hwloc_dep.found(),
   'GINKGO_ENABLE_HALF': true,
 }
 gko_public_header_contents = '''
@@ -155,7 +168,6 @@ gko_public_header_contents = '''
 #include <ginkgo/core/preconditioner/isai.hpp>
 #include <ginkgo/core/preconditioner/jacobi.hpp>
 #include <ginkgo/core/preconditioner/sor.hpp>
-#include <ginkgo/core/preconditioner/utils.hpp>
 #include <ginkgo/core/reorder/amd.hpp>
 #include <ginkgo/core/reorder/mc64.hpp>
 #include <ginkgo/core/reorder/nested_dissection.hpp>
@@ -194,13 +206,6 @@ gko_public_header_contents = '''
 #include <ginkgo/core/synthesizer/containers.hpp>
 '''
 subdir('include/ginkgo')
-
-hwloc_dep = dependency('hwloc')
-metis_dep = dependency('metis')
-mpi_sub = subproject('mpi-c')
-mpi_dep = mpi_sub.get_variable('mpi_dep')
-mpirun = mpi_sub.get_variable('mpirun')
-omp_dep = dependency('OpenMP')
 
 reference_src = [
   'reference/base/batch_multi_vector_kernels.cpp',
@@ -955,7 +960,7 @@ if get_option('examples')
 endif
 
 # tests
-if get_option('test')
+if get_option('tests')
   gtest_dep = dependency('gtest')
   ginkgo_test_srcs = [
     ['core/test/gtest/ginkgo_main.cpp', 'core/test/gtest/resources.cpp'],
@@ -965,66 +970,72 @@ if get_option('test')
   build_dir = meson.current_build_dir()
   subdir('matrices')
   foreach cpp, pnum : reference_test_src
-    name = '_'.join(cpp.split('/')).split('.')[0]
     is_mpi = pnum > 0
-    exe = executable(
-      f'reference_@name@',
-      [cpp] + ginkgo_test_srcs[is_mpi],
-      dependencies: [ginkgo_dep, gtest_dep],
-      cpp_args: [
-        '-DEXEC_TYPE=ReferenceExecutor',
-        '-DGKO_COMPILING_REFERENCE',
-        '-DGKO_DEVICE_NAMESPACE=reference',
-      ],
-    )
-    if is_mpi
-      test(
-        name,
-        mpirun,
-        args: ['-n', pnum.to_string(), exe],
-        suite: 'reference',
+    if not is_mpi or with_mpi
+      name = '_'.join(cpp.split('/')).split('.')[0]
+      exe = executable(
+        f'reference_@name@',
+        [cpp] + ginkgo_test_srcs[is_mpi],
+        dependencies: [ginkgo_dep, gtest_dep],
+        cpp_args: [
+          '-DEXEC_TYPE=ReferenceExecutor',
+          '-DGKO_COMPILING_REFERENCE',
+          '-DGKO_DEVICE_NAMESPACE=reference',
+        ],
       )
-    else
-      test(name, exe, suite: 'reference')
+      if is_mpi
+        test(
+          name,
+          mpirun,
+          args: ['-n', pnum.to_string(), exe],
+          suite: 'reference',
+        )
+      else
+        test(name, exe, suite: 'reference')
+      endif
     endif
   endforeach
   foreach cpp, pnum : omp_test_src
-    name = '_'.join(cpp.split('/')).split('.')[0]
     is_mpi = pnum > 0
-    exe = executable(
-      f'omp_@name@',
-      [cpp] + ginkgo_test_srcs[cpp.contains('mpi')],
-      dependencies: [ginkgo_dep, gtest_dep],
-      cpp_args: [
-        '-DEXEC_TYPE=OmpExecutor',
-        '-DGKO_COMPILING_OMP',
-        '-DGKO_DEVICE_NAMESPACE=omp',
-      ],
-    )
-    if is_mpi
-      test(
-        name,
-        mpirun,
-        args: ['-n', pnum.to_string(), exe],
-        suite: 'omp',
-        env: {'OMP_NUM_THREADS': '3'},
+    if not is_mpi or with_mpi
+      name = '_'.join(cpp.split('/')).split('.')[0]
+      exe = executable(
+        f'omp_@name@',
+        [cpp] + ginkgo_test_srcs[cpp.contains('mpi')],
+        dependencies: [ginkgo_dep, gtest_dep],
+        cpp_args: [
+          '-DEXEC_TYPE=OmpExecutor',
+          '-DGKO_COMPILING_OMP',
+          '-DGKO_DEVICE_NAMESPACE=omp',
+        ],
       )
-    else
-      test(name, exe, suite: 'omp')
+      if is_mpi
+        test(
+          name,
+          mpirun,
+          args: ['-n', pnum.to_string(), exe],
+          suite: 'omp',
+          env: {'OMP_NUM_THREADS': '3'},
+        )
+      else
+        test(name, exe, suite: 'omp')
+      endif
     endif
   endforeach
   foreach cpp, pnum : core_test_src
-    name = '_'.join(cpp.split('/')).split('.')[0]
     is_mpi = pnum > 0
-    exe = executable(
-      f'core_@name@',
-      [cpp] + ginkgo_test_srcs[cpp.contains('mpi')],
-      dependencies: [ginkgo_dep, gtest_dep],
-    )
-    if is_mpi
-      test(name, mpirun, args: ['-n', pnum.to_string(), exe], suite: 'core')
-    else
-      test(name, exe, suite: 'core')
+    if not is_mpi or with_mpi
+      name = '_'.join(cpp.split('/')).split('.')[0]
+      exe = executable(
+        f'core_@name@',
+        [cpp] + ginkgo_test_srcs[cpp.contains('mpi')],
+        dependencies: [ginkgo_dep, gtest_dep],
+      )
+      if is_mpi
+        test(name, mpirun, args: ['-n', pnum.to_string(), exe], suite: 'core')
+      else
+        test(name, exe, suite: 'core')
+      endif
     endif
   endforeach
 endif

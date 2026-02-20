@@ -7,6 +7,6 @@
 option(
   'mpi_implementation',
   type: 'combo',
-  choices: ['default', 'openmpi', 'mpich'],
+  choices: ['mpich', 'openmpi', 'auto'],
   yield: true,
 )
