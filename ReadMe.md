@@ -20,5 +20,6 @@ These are:
 
 - `fmt`
 - `google-benchmark`
+- `gtest`
 - `liblzma`
 - `nlohmann-json`

@@ -4,11 +4,10 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-[wrap-git]
-url = https://github.com/erikzenker/inotify-cpp.git
-revision = head
-clone-recursive = true
-patch_directory = inotify-cpp
-
-[provide]
-inotify-cpp = inotify_cpp_dep
+configure_file(
+  configuration: {'Ginkgo_BINARY_DIR': build_dir},
+  input: 'config.hpp.in',
+  output: 'config.hpp',
+  format: 'cmake@',
+)
+subdir('test')

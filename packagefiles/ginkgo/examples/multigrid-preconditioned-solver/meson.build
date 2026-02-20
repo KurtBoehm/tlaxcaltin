@@ -4,11 +4,9 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-[wrap-git]
-url = https://github.com/erikzenker/inotify-cpp.git
-revision = head
-clone-recursive = true
-patch_directory = inotify-cpp
-
-[provide]
-inotify-cpp = inotify_cpp_dep
+executable(
+  'multigrid-preconditioned-solver',
+  'multigrid-preconditioned-solver.cpp',
+  dependencies: examples_deps,
+)
+subdir('data')
