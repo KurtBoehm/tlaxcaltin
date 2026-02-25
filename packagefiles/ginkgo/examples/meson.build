@@ -35,8 +35,11 @@ subdir('performance-debugging')
 subdir('preconditioner-export')
 subdir('reordered-preconditioned-solver')
 subdir('simple-solver-logging')
-subdir('distributed-solver')
 # subdir('kokkos-assembly/kokkos-assembly.cpp')
+
+if with_mpi
+  subdir('distributed-solver')
+endif
 
 ocv = dependency('opencv4', required: false)
 if ocv.found()
