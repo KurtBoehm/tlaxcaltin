@@ -24,7 +24,7 @@ else
 endif
 
 prefix = mpi_dep.get_variable('prefix')
-mpiexec = find_program(prefix / 'bin' / f'mpiexec@mpi_implementation@', required: false)
+mpiexec = find_program(prefix / 'bin' / f'mpiexec.@mpi_implementation@', required: false)
 if not mpiexec.found()
   mpiexec = find_program(prefix / 'bin' / 'mpiexec')
 endif
