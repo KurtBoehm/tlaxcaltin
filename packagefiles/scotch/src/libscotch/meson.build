@@ -14,24 +14,24 @@ dummysizes_exe = executable(
   'dummysizes.c',
   c_args: c_args,
 )
-scotch_h_gen = custom_target(
+scotch_h = custom_target(
   'scotch_h',
   input: ['library.h'],
   output: ['scotch.h'],
   command: [dummysizes_exe, '-s' + name_suffix, '@INPUT@', '@OUTPUT@'],
   build_by_default: true,
 )
-scotchf_h_gen = custom_target(
+scotchf_h = custom_target(
   'scotchf_h',
   input: ['library_f.h'],
-  output: ['scotch_f.h'],
+  output: ['scotchf.h'],
   command: [dummysizes_exe, '-s' + name_suffix, '@INPUT@', '@OUTPUT@'],
   build_by_default: true,
 )
 
 ptdummysizes_exe = []
-ptscotch_h_gen = []
-ptscotchf_h_gen = []
+ptscotch_h = []
+ptscotchf_h = []
 if build_ptscotch
   ptdummysizes_exe = executable(
     'ptdummysizes',
@@ -39,7 +39,7 @@ if build_ptscotch
     c_args: c_args + ['-DSCOTCH_PTSCOTCH'],
     dependencies: [mpi_dep],
   )
-  ptscotch_h_gen = custom_target(
+  ptscotch_h = custom_target(
     'ptscotch_h',
     input: ['library_pt.h'],
     output: ['ptscotch.h'],
@@ -47,7 +47,7 @@ if build_ptscotch
     build_by_default: true,
   )
 
-  ptscotchf_h_gen = custom_target(
+  ptscotchf_h = custom_target(
     'ptscotchf_h',
     input: ['library_pt_f.h'],
     output: ['ptscotchf.h'],
@@ -59,7 +59,7 @@ endif
 # Generate using Bison and Flex
 parser_yy_gen = []
 parser_ll_gen = []
-if bison_prg.found() and flex_prg.found()
+if bison_prg.found()
   parser_yy_gen = custom_target(
     'parser_yy',
     input: ['parser_yy.y'],
@@ -73,6 +73,12 @@ if bison_prg.found() and flex_prg.found()
     ],
     build_by_default: true,
   )
+else
+  parser_yy_gen = files('last_resort/parser_yy.c')
+  libscotch_inc += include_directories('last_resort')
+endif
+
+if flex_prg.found()
   parser_ll_gen = custom_target(
     'parser_ll',
     input: ['parser_ll.l'],
@@ -87,7 +93,6 @@ if bison_prg.found() and flex_prg.found()
     build_by_default: true,
   )
 else
-  parser_yy_gen = files('last_resort/parser_yy.c')
   parser_ll_gen = files('last_resort/parser_ll.c')
   libscotch_inc += include_directories('last_resort')
 endif
@@ -322,12 +327,12 @@ scotch_src = [
   ),
   parser_yy_gen,
   parser_ll_gen,
-  scotch_h_gen,
 ]
+scotch_gen = [scotch_h, scotchf_h]
 
 scotcherr_lib = library(
   'scotcherr',
-  ['library_error.c', scotch_h_gen],
+  ['library_error.c', scotch_gen],
   c_args: c_args,
   include_directories: libscotch_inc,
   version: scotch_version_long,
@@ -337,12 +342,14 @@ scotcherr_dep = declare_dependency(
   link_with: scotcherr_lib,
   compile_args: c_args,
   include_directories: include_directories('.'),
+  sources: scotch_gen,
   version: scotch_version_long,
 )
+meson.override_dependency('scotcherr', scotcherr_dep)
 
 scotcherrexit_lib = library(
   'scotcherrexit',
-  ['library_error_exit.c', scotch_h_gen],
+  ['library_error_exit.c', scotch_gen],
   c_args: c_args,
   include_directories: libscotch_inc,
   version: scotch_version_long,
@@ -352,8 +359,10 @@ scotcherrexit_dep = declare_dependency(
   link_with: scotcherrexit_lib,
   compile_args: c_args,
   include_directories: include_directories('.'),
+  sources: scotch_gen,
   version: scotch_version_long,
 )
+meson.override_dependency('scotcherrexit', scotcherrexit_dep)
 
 scotch_args = c_args
 scotch_deps = base_deps + [scotcherr_dep]
@@ -394,7 +403,7 @@ endif
 
 scotch_lib = library(
   'scotch',
-  scotch_src,
+  [scotch_src, scotch_gen],
   c_args: scotch_args,
   include_directories: libscotch_inc,
   dependencies: scotch_deps,
@@ -406,8 +415,10 @@ scotch_dep = declare_dependency(
   compile_args: scotch_args,
   include_directories: include_directories('.'),
   dependencies: scotch_deps,
+  sources: scotch_gen,
   version: scotch_version_long,
 )
+meson.override_dependency('scotch', scotch_dep)
 
 if build_ptscotch
   ptscotch_src = [
@@ -561,13 +572,12 @@ if build_ptscotch
       'vdgraph_separate_zr.c',
       'vdgraph_store.c',
     ),
-    scotch_h_gen,
-    ptscotch_h_gen,
   ]
+  ptscotch_gen = [scotch_h, scotchf_h, ptscotch_h, ptscotchf_h]
 
   ptscotcherr_lib = library(
     'ptscotcherr',
-    ['library_error.c', scotch_h_gen, ptscotch_h_gen],
+    ['library_error.c', ptscotch_gen],
     c_args: c_args,
     include_directories: libscotch_inc,
     version: scotch_version_long,
@@ -577,12 +587,14 @@ if build_ptscotch
     link_with: ptscotcherr_lib,
     compile_args: c_args,
     include_directories: include_directories('.'),
+    sources: ptscotch_gen,
     version: scotch_version_long,
   )
+  meson.override_dependency('ptscotcherr', ptscotcherr_dep)
 
   ptscotcherrexit_lib = library(
     'ptscotcherrexit',
-    ['library_error_exit.c', scotch_h_gen, ptscotch_h_gen],
+    ['library_error_exit.c', ptscotch_gen],
     c_args: c_args,
     include_directories: libscotch_inc,
     version: scotch_version_long,
@@ -592,8 +604,10 @@ if build_ptscotch
     link_with: ptscotcherrexit_lib,
     compile_args: c_args,
     include_directories: include_directories('.'),
+    sources: ptscotch_gen,
     version: scotch_version_long,
   )
+  meson.override_dependency('ptscotcherrexit', ptscotcherrexit_dep)
 
   ptscotch_deps = [mpi_dep, scotch_dep, ptscotcherr_dep]
   ptscotch_args = c_args + ['-DSCOTCH_PTSCOTCH']
@@ -605,7 +619,7 @@ if build_ptscotch
 
   ptscotch_lib = library(
     'ptscotch',
-    ptscotch_src,
+    [ptscotch_src, ptscotch_gen],
     c_args: ptscotch_args,
     include_directories: libscotch_inc,
     dependencies: ptscotch_deps,
@@ -617,8 +631,10 @@ if build_ptscotch
     compile_args: ptscotch_args,
     include_directories: include_directories('.'),
     dependencies: ptscotch_deps,
+    sources: ptscotch_gen,
     version: scotch_version_long,
   )
+  meson.override_dependency('ptscotch', ptscotch_dep)
 endif
 
-# TODO Installing
+# TODO Installation

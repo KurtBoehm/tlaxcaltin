@@ -1,0 +1,18 @@
+# This file is part of https://github.com/KurtBoehm/tlaxcaltin.
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+option('build_double', type: 'boolean', value: true)
+option('build_single', type: 'boolean', value: true)
+option('build_complex', type: 'boolean', value: true)
+option('build_complex16', type: 'boolean', value: true)
+option('intsize64', type: 'boolean', value: true)
+
+option('use_openmp', type: 'boolean', value: true)
+option('use_scotch', type: 'boolean', value: true)
+option('use_ptscotch', type: 'boolean', value: true)
+option('use_metis', type: 'boolean', value: false)
+option('use_parmetis', type: 'boolean', value: false)
+option('use_scalapack', type: 'boolean', value: false)

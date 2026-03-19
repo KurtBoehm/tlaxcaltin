@@ -4,14 +4,9 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-# dependencies: arpack-ng, superlu, suitesparse
-
-[wrap-git]
-url = https://github.com/m-reuter/arpackpp.git
-revision = head
-clone-recursive = true
-patch_directory = arpackpp
-depth = 1
-
-[provide]
-arpackpp = arpackpp_dep
+option(
+  'mpi_implementation',
+  type: 'combo',
+  choices: ['mpich', 'openmpi', 'auto'],
+  yield: true,
+)

@@ -15,4 +15,4 @@ patch_directory = scotch
 diff_files = patch/scotch.patch
 
 [provide]
-scotch = scotch_dep
+dependency_names = scotcherr, scotcherrexit, scotch, ptscotcherr, ptscotcherrexit, ptscotch, scotchmetisv3, scotchmetisv5, ptscotchparmetisv3, esmumps, ptesmumps

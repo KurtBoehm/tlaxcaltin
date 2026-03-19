@@ -7,11 +7,11 @@
 # dependencies: arpack-ng, superlu, suitesparse
 
 [wrap-git]
-url = https://github.com/m-reuter/arpackpp.git
-revision = head
+url = https://github.com/gsylvand/mumps_archive.git
+revision = 5.8.2
 clone-recursive = true
-patch_directory = arpackpp
+patch_directory = mumps
 depth = 1
 
 [provide]
-arpackpp = arpackpp_dep
+mumps = mumps_dep

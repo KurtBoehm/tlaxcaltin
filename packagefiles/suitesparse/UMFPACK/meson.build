@@ -351,7 +351,7 @@ umfpack_inc = include_directories('Include')
 umfpack_dep = base_deps + [blas_dep, amd_dep, cholmod_dep]
 
 umfpack_lib = shared_library(
-  f'umfpack',
+  'umfpack',
   umfpack_src,
   dependencies: umfpack_dep,
   include_directories: [umfpack_inc, include_directories('Source')],

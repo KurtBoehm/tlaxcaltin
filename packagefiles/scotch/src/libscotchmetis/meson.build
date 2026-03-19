@@ -54,8 +54,10 @@ foreach version : [3, 5]
     ),
   ]
 endforeach
-scotchmetis3_dep = scotchmetis_deps[0]
-scotchmetis5_dep = scotchmetis_deps[1]
+scotchmetisv3_dep = scotchmetis_deps[0]
+meson.override_dependency('scotchmetisv3', scotchmetisv3_dep)
+scotchmetisv5_dep = scotchmetis_deps[1]
+meson.override_dependency('scotchmetisv5', scotchmetisv5_dep)
 
 if build_ptscotch
   parmetis_h_gen = custom_target(
@@ -97,7 +99,8 @@ if build_ptscotch
       ),
     ]
   endforeach
-  ptscotchparmetis3_dep = ptscotchparmetis_deps[0]
+  ptscotchparmetisv3_dep = ptscotchparmetis_deps[0]
+  meson.override_dependency('ptscotchparmetisv3', ptscotchparmetisv3_dep)
 endif
 
 # TODO Installing

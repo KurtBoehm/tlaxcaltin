@@ -110,7 +110,7 @@ subdir('libscotch')
 
 # Build EsMUMPS library
 if get_option('build_libesmumps')
-  # TODO subdir('esmumps')
+  subdir('esmumps')
 endif
 
 # Build ScotchMeTiS library
