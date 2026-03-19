@@ -1,0 +1,17 @@
+# This file is part of https://github.com/KurtBoehm/tlaxcaltin.
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+# dependencies: mpi
+
+[wrap-file]
+directory = scalapack-2.2.2
+source_url = https://github.com/Reference-ScaLAPACK/scalapack/archive/refs/tags/v2.2.2.tar.gz
+source_filename = scalapack-2.2.2.tar.gz
+source_hash = a2f0c9180a210bf7ffe126c9cb81099cf337da1a7120ddb4cbe4894eb7b7d022
+patch_directory = scalapack
+
+[provide]
+scalapack = scalapack_dep

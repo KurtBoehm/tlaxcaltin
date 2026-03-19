@@ -1,0 +1,3 @@
+subroutine mangletest()
+  return
+end
