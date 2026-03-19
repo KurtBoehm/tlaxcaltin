@@ -23,7 +23,7 @@ lapack_dep = dependency('lapack')
 
 c_args = ['-Wno-error=implicit-function-declaration']
 
-mangletest_lib = static_library('mangletest', 'TOOLS/mangletest.f')
+mangletest_lib = static_library('mangletest', 'TOOLS/mangletest.f90')
 if cc.compiles('extern void mangletest_(void); int main(void) { mangletest_(); }')
   message('Fortran mangling: underscore')
   c_args += ['-DAdd_']
@@ -60,6 +60,11 @@ scalapack_lib = library(
   version: scalapack_version,
   soversion: f'@scalapack_version_major@.@scalapack_version_minor@',
   install: true,
+)
+scalapack_dep = declare_dependency(
+  link_with: scalapack_lib,
+  dependencies: [mpi_c_dep, mpi_f_dep, lapack_dep, blas_dep],
+  version: scalapack_version,
 )
 
 # if build_tests
