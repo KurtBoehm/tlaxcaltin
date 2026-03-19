@@ -9,7 +9,7 @@ project(
   'liblzma',
   'c',
   version: '5.8.2',
-  license: 'pd/lgpl2/gpl2/gpl3',
+  license: '0BSD AND LGPL-2.1-or-later AND GPL-2.0-or-later AND GPL-3.0-or-later',
 )
 
 add_project_arguments('-D_GNU_SOURCE', language: 'c')

@@ -9,6 +9,7 @@ project(
   'c',
   'cpp',
   default_options: ['cpp_std=c++17', 'warning_level=3'],
+  license: 'BSD-3-Clause',
 )
 
 suitesparse = subproject('suitesparse')

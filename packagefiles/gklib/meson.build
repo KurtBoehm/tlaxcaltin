@@ -4,10 +4,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-project(
-  'GKlib',
-  'c',
-)
+project('GKlib', 'c', license: 'Apache-2.0')
 
 m_dep = meson.get_compiler('c').find_library('m', required: false)
 

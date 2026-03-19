@@ -9,6 +9,7 @@ project(
   'c',
   version: '3.1.0',
   default_options: ['warning_level=1'],
+  license: 'Apache-2.0 OR MIT',
 )
 
 # TODO: Support FEI

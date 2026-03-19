@@ -9,6 +9,7 @@ project(
   'cpp',
   'c',
   version: '1.11.0',
+  license: 'BSD-3-Clause',
 )
 
 hwloc_dep = dependency('hwloc', required: false)

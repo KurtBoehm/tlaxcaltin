@@ -10,6 +10,7 @@ project(
   'cpp',
   version: '2.11.0',
   default_options: ['cpp_std=c++20', 'warning_level=3'],
+  license: 'GPL-2.0-only WITH DUNE-runtime-exception',
 )
 
 mod_version = '2.11.0'

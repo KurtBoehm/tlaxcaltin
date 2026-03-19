@@ -4,7 +4,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-project('inotify-cpp', 'cpp', default_options: ['cpp_std=c++23'])
+project('inotify-cpp', 'cpp', default_options: ['cpp_std=c++23'], license: 'MIT')
 
 inc = include_directories('src/include')
 inotify_cpp_lib = static_library(

@@ -4,7 +4,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-project('Scotch', 'c', version: '7.0.11')
+project('scotch', 'c', version: '7.0.11', license: 'CECILL-C')
 
 # C compiler arguments
 c_args = []
