@@ -1,6 +1,0 @@
-option(
-  'test',
-  type: 'boolean',
-  value: true,
-  description: 'Build ScaLAPACK tests.'
-)

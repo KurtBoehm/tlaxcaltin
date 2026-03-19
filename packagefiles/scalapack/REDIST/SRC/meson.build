@@ -1,3 +1,9 @@
+# This file is part of https://github.com/KurtBoehm/tlaxcaltin.
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 allaaux = files('pgemraux.c')
 
 imrsrc = files('pigemr.c', 'pigemr2.c', 'pitrmr.c', 'pitrmr2.c')

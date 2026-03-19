@@ -1,3 +1,9 @@
+# This file is part of https://github.com/KurtBoehm/tlaxcaltin.
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 project(
   'ScaLAPACK',
   ['c', 'fortran'],
@@ -11,7 +17,7 @@ scalapack_version_major = scalapack_version_split[0]
 scalapack_version_minor = scalapack_version_split[1]
 scalapack_version_patch = scalapack_version_split[2]
 
-build_tests = get_option('test')
+# build_tests = get_option('test')
 
 fc = meson.get_compiler('fortran')
 cc = meson.get_compiler('c')
