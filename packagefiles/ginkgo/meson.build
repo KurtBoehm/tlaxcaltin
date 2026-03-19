@@ -18,9 +18,9 @@ omp_dep = dependency('OpenMP')
 
 with_mpi = get_option('mpi_implementation') != 'none'
 if with_mpi
-  mpi_sub = subproject('mpi-c')
-  mpi_dep = mpi_sub.get_variable('mpi_dep')
-  mpirun = mpi_sub.get_variable('mpirun')
+  mpi_sub = subproject('mpi')
+  mpi_dep = mpi_sub.get_variable('mpi_c_dep')
+  mpiexec = mpi_sub.get_variable('mpiexec')
 else
   mpi_dep = []
 endif
@@ -1000,7 +1000,7 @@ if get_option('tests')
       if is_mpi
         test(
           name,
-          mpirun,
+          mpiexec,
           args: ['-n', pnum.to_string(), exe],
           suite: 'reference',
         )
@@ -1026,7 +1026,7 @@ if get_option('tests')
       if is_mpi
         test(
           name,
-          mpirun,
+          mpiexec,
           args: ['-n', pnum.to_string(), exe],
           suite: 'omp',
           env: {'OMP_NUM_THREADS': '3'},
@@ -1046,7 +1046,7 @@ if get_option('tests')
         dependencies: [ginkgo_dep, gtest_dep],
       )
       if is_mpi
-        test(name, mpirun, args: ['-n', pnum.to_string(), exe], suite: 'core')
+        test(name, mpiexec, args: ['-n', pnum.to_string(), exe], suite: 'core')
       else
         test(name, exe, suite: 'core')
       endif

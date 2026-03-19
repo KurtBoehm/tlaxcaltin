@@ -59,8 +59,9 @@ endif
 # External dependencies #
 #########################
 
-mpi_c_dep = subproject('mpi-c').get_variable('mpi_dep')
-mpi_f_dep = subproject('mpi-fortran').get_variable('mpi_dep')
+mpi_sub = subproject('mpi')
+mpi_c_dep = mpi_sub.get_variable('mpi_c_dep')
+mpi_f_dep = mpi_sub.get_variable('mpi_fortran_dep')
 threads_dep = dependency('threads')
 
 if intsize64

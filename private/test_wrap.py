@@ -133,13 +133,7 @@ for p in base_path.iterdir():
     outp = subproj_path / p.name
     if p.suffix == ".wrap":
         copy(p, outp)
-    if p.is_dir() and p.name in (
-        "blas_compat",
-        "mpi-c",
-        "mpi-cpp",
-        "mpi-fortran",
-        "options",
-    ):
+    if p.is_dir() and p.name in ("blas_compat", "mpi", "options"):
         copytree(p, outp, dirs_exist_ok=True)
 
 copytree(

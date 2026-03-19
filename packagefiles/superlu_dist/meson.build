@@ -242,7 +242,7 @@ src = [
 ]
 
 inc = include_directories('.', 'SRC/include')
-mpi_dep = subproject('mpi-c').get_variable('mpi_dep')
+mpi_dep = subproject('mpi').get_variable('mpi_c_dep')
 assert(mpi_dep.found(), 'MPI not found!')
 deps = [
   mpi_dep,

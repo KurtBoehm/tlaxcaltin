@@ -29,7 +29,7 @@ if has_posix_timers and not clock_gettime_compiles
 endif
 
 threads_dep = dependency('threads', required: false)
-mpi_dep = subproject('mpi-c').get_variable('mpi_dep')
+mpi_dep = subproject('mpi').get_variable('mpi_c_dep')
 
 c_args += [
   '-Drestrict=__restrict',

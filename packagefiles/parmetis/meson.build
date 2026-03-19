@@ -11,7 +11,7 @@ include = include_directories('include')
 m_dep = meson.get_compiler('c').find_library('m', required: false)
 gklib_dep = subproject('gklib').get_variable('gklib_dep')
 metis_dep = subproject('metis').get_variable('metis_dep')
-mpi_dep = subproject('mpi-c').get_variable('mpi_dep')
+mpi_dep = subproject('mpi').get_variable('mpi_c_dep')
 assert(mpi_dep.found(), 'MPI not found!')
 
 parmetis_lib = shared_library(

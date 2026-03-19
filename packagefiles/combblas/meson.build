@@ -20,7 +20,7 @@ inc = [
   include_directories('psort-1.0/include'),
   include_directories('usort/include'),
 ]
-mpi_dep = subproject('mpi-cpp').get_variable('mpi_dep')
+mpi_dep = subproject('mpi').get_variable('mpi_cpp_dep')
 assert(mpi_dep.found(), 'MPI not found!')
 deps = [mpi_dep]
 

@@ -620,7 +620,7 @@ inc = [
 
 m_dep = meson.get_compiler('c').find_library('m', required: false)
 blas_dep = dependency('blas')
-mpi_dep = subproject('mpi-c').get_variable('mpi_dep')
+mpi_dep = subproject('mpi').get_variable('mpi_c_dep')
 assert(mpi_dep.found(), 'MPI not found!')
 deps = [
   blas_dep,

@@ -4,7 +4,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-# dependencies: combblas, metis, mpi-c, parmetis, suitesparse
+# dependencies: combblas, metis, mpi, parmetis, suitesparse
 
 [wrap-file]
 directory = superlu_dist-9.2.1

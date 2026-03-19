@@ -114,9 +114,9 @@ if lapack_dep.found()
     cfg += {'LAPACK_NEEDS_UNDERLINE': 1}
   endif
 endif
-mpi_sub = subproject('mpi-c', required: false)
+mpi_sub = subproject('mpi', required: false)
 if mpi_sub.found()
-  deps += [mpi_sub.get_variable('mpi_dep')]
+  deps += [mpi_sub.get_variable('mpi_c_dep')]
   args += ['-DHAVE_MPI=1']
 endif
 gmp_dep = dependency('gmpxx', required: false)
