@@ -519,12 +519,12 @@ endforeach
 
 mumps_lib = library(
   'mumps',
-  dependencies: [mpi_f_dep, openmp_f_dep],
+  dependencies: [mpi_f_dep, openmp_f_dep, mumps_common_dep],
   link_whole: a_mumps_libs,
   version: meson.project_version(),
 )
 mumps_dep = declare_dependency(
-  dependencies: [mpi_c_dep, mpi_f_dep, openmp_f_dep, common_deps],
+  dependencies: [mpi_c_dep, mpi_f_dep, openmp_f_dep, mumps_common_dep],
   link_with: mumps_lib,
   include_directories: inc_pub,
   version: meson.project_version(),
