@@ -38,6 +38,11 @@ elif cc.compiles('extern void MANGLETEST(void); int main(void) { MANGLETEST(); }
   c_args += ['-DUpCase']
 endif
 
+no_implicit_args = []
+foreach a : fc.get_supported_arguments('-fno-implicit-none')
+  no_implicit_args += a
+endforeach
+
 subdir('BLACS')
 subdir('TOOLS')
 subdir('PBLAS')
@@ -61,6 +66,7 @@ scalapack_lib = library(
     src_c,
   ],
   c_args: c_args,
+  fortran_args: no_implicit_args,
   dependencies: [mpi_c_dep, mpi_f_dep, lapack_dep, blas_dep],
   link_whole: [blacs_cint_lib],
   version: scalapack_version,
