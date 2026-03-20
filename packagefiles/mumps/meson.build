@@ -98,6 +98,7 @@ configure_file(
   input: int_def,
   output: 'mumps_int_def.h',
   copy: true,
+  build_subdir: 'gen_defs',
 )
 
 ################
@@ -331,36 +332,37 @@ endif
 ################
 
 inc_src = include_directories('src')
-inc_pub = include_directories('include')
+inc_pub = [include_directories('include'), include_directories('gen_defs')]
 
 mumps_common_c = static_library(
   'mumps_common_c',
   comm_other_c,
-  include_directories: [inc_src, inc_pub],
   dependencies: [mpi_c_dep, common_deps],
+  include_directories: [inc_src, inc_pub],
   c_args: [mumps_cflags, ordering_defs],
   pic: true,
 )
 mumps_common_fortran = static_library(
   'mumps_common_fortran',
-  comm_src_fortran + comm_other_fortran,
-  include_directories: [inc_src, inc_pub],
+  [comm_src_fortran, comm_other_fortran],
   dependencies: [mpi_f_dep, openmp_f_dep, common_deps],
+  include_directories: [inc_src, inc_pub],
+  override_options: ['warning_level=0'],
   fortran_args: [mumps_fflags, ordering_defs, scalapack_defs, gemmt_defs],
   pic: true,
 )
 
 mumps_common_lib = library(
   'mumps_common',
+  dependencies: [mpi_c_dep, mpi_f_dep, openmp_f_dep, common_deps],
   link_whole: [mumps_common_c, mumps_common_fortran],
   include_directories: [inc_src, inc_pub],
-  dependencies: [mpi_c_dep, mpi_f_dep, openmp_f_dep, common_deps],
   version: meson.project_version(),
 )
 mumps_common_dep = declare_dependency(
+  dependencies: [mpi_c_dep, mpi_f_dep, openmp_f_dep, common_deps],
   link_with: [mumps_common_lib],
   include_directories: inc_pub,
-  dependencies: [mpi_c_dep, mpi_f_dep, openmp_f_dep, common_deps],
   version: meson.project_version(),
 )
 
@@ -487,24 +489,25 @@ foreach a : num_prefixes
   a_mumps_c_lib = static_library(
     f'@a@mumps_c',
     [cint_src, src_c],
-    c_args: [mumps_cflags, a_defs],
-    include_directories: inc_pub,
     dependencies: [mpi_c_dep, mumps_common_dep],
+    include_directories: inc_pub,
+    c_args: [mumps_cflags, a_defs],
     pic: true,
   )
   a_mumps_f_lib = static_library(
     f'@a@mumps_fortran',
     src_fortran,
-    fortran_args: [mumps_fflags, a_defs, scalapack_defs, a_gemmt_defs],
-    include_directories: [inc_src, inc_pub],
     dependencies: [mpi_f_dep, openmp_f_dep, mumps_common_dep],
+    include_directories: [inc_src, inc_pub],
+    override_options: ['warning_level=0'],
+    fortran_args: [mumps_fflags, a_defs, scalapack_defs, a_gemmt_defs],
     pic: true,
   )
 
   a_mumps_lib = library(
     f'@a@mumps',
-    link_whole: [a_mumps_c_lib, a_mumps_f_lib],
     dependencies: [mpi_f_dep, openmp_f_dep],
+    link_whole: [a_mumps_c_lib, a_mumps_f_lib],
     version: meson.project_version(),
   )
   a_mumps_libs += [a_mumps_c_lib, a_mumps_f_lib]
@@ -516,13 +519,13 @@ endforeach
 
 mumps_lib = library(
   'mumps',
-  link_whole: a_mumps_libs,
   dependencies: [mpi_f_dep, openmp_f_dep],
+  link_whole: a_mumps_libs,
   version: meson.project_version(),
 )
 mumps_dep = declare_dependency(
+  dependencies: [mpi_c_dep, mpi_f_dep, openmp_f_dep, common_deps],
   link_with: mumps_lib,
   include_directories: inc_pub,
-  dependencies: [mpi_c_dep, mpi_f_dep, openmp_f_dep, common_deps],
   version: meson.project_version(),
 )
