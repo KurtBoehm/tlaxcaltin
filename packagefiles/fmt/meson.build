@@ -22,25 +22,22 @@ endif
 header_only = get_option('header-only')
 
 if header_only
-  fmt_header_only_dep = declare_dependency(
-    include_directories: 'include',
-    compile_args: '-DFMT_HEADER_ONLY',
-  )
+  fmt_header_only_dep = declare_dependency(include_directories: 'include', compile_args: '-DFMT_HEADER_ONLY')
 else
   fmt_lib = library(
     'fmt',
     'src/format.cc',
     'src/os.cc',
-    cpp_args: fmt_private_cpp_args,
-    override_options: 'cpp_std=c++14',
     include_directories: 'include',
+    override_options: 'cpp_std=c++14',
+    cpp_args: fmt_private_cpp_args,
     build_by_default: true,
     install: not meson.is_subproject(),
   )
   fmt_dep = declare_dependency(
     include_directories: 'include',
-    compile_args: fmt_interface_cpp_args,
     link_with: fmt_lib,
+    compile_args: fmt_interface_cpp_args,
   )
   if not meson.is_subproject()
     install_subdir('include', strip_directory: true, install_dir: get_option('includedir'))

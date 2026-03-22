@@ -52,28 +52,14 @@ spqr_inc = include_directories('Include')
 spqr_lib = shared_library(
   'spqr',
   spqr_src,
-  dependencies: [
-    config_dep,
-    blas_dep,
-    lapack_dep,
-    amd_dep,
-    cholmod_dep,
-    colamd_dep,
-  ],
   include_directories: spqr_inc,
+  dependencies: [config_dep, blas_dep, lapack_dep, amd_dep, cholmod_dep, colamd_dep],
   version: '4',
 )
 
 spqr_dep = declare_dependency(
-  link_with: spqr_lib,
   include_directories: spqr_inc,
-  dependencies: [
-    config_dep,
-    blas_dep,
-    lapack_dep,
-    amd_dep,
-    cholmod_dep,
-    colamd_dep,
-  ],
+  dependencies: [config_dep, blas_dep, lapack_dep, amd_dep, cholmod_dep, colamd_dep],
+  link_with: spqr_lib,
   version: '4.3.6',
 )

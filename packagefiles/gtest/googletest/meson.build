@@ -30,31 +30,28 @@ endif
 gtest_lib = library(
   'gtest-all',
   sources: files('src/gtest-all.cc'),
-  gnu_symbol_visibility: 'hidden',
-  cpp_args: dllexp,
-  override_options: override_cpp,
-  dependencies: dependency('threads'),
   include_directories: gtest_incdir,
+  dependencies: dependency('threads'),
+  override_options: override_cpp,
+  cpp_args: dllexp,
+  gnu_symbol_visibility: 'hidden',
 )
 
 gtest_main_lib = library(
   'gtest_main',
   sources: files('src/gtest_main.cc'),
-  gnu_symbol_visibility: 'hidden',
-  cpp_args: dllexp,
-  override_options: override_cpp,
   include_directories: gtest_incdir,
   link_with: gtest_lib,
+  override_options: override_cpp,
+  cpp_args: dllexp,
+  gnu_symbol_visibility: 'hidden',
 )
 
 gtest_dep = declare_dependency(
-  compile_args: dllimp,
   include_directories: gtest_incdir,
-  link_with: gtest_lib,
   dependencies: dependency('threads'),
+  link_with: gtest_lib,
+  compile_args: dllimp,
 )
 
-gtest_main_dep = declare_dependency(
-  link_with: gtest_main_lib,
-  dependencies: gtest_dep,
-)
+gtest_main_dep = declare_dependency(dependencies: gtest_dep, link_with: gtest_main_lib)

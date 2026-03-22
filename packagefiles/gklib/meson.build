@@ -43,7 +43,4 @@ gk_lib = shared_library(
   dependencies: [m_dep],
 )
 
-gklib_dep = declare_dependency(
-  link_with: gk_lib,
-  include_directories: gk_inc,
-)
+gklib_dep = declare_dependency(include_directories: gk_inc, link_with: gk_lib)

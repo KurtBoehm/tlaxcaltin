@@ -58,9 +58,9 @@ lib_benchmark = library(
   'gbenchmark',
   benchmark_sources,
   include_directories: inc,
+  dependencies: lib_benchmark_deps,
   cpp_args: args,
   gnu_symbol_visibility: 'hidden',
-  dependencies: lib_benchmark_deps,
 )
 
 dargs = []
@@ -68,24 +68,20 @@ if get_option('default_library') == 'static'
   dargs += '-DBENCHMARK_STATIC_DEFINE'
 endif
 
-google_benchmark_dep = declare_dependency(
-  compile_args: dargs,
-  link_with: lib_benchmark,
-  include_directories: inc,
-)
+google_benchmark_dep = declare_dependency(include_directories: inc, link_with: lib_benchmark, compile_args: dargs)
 
 lib_benchmark_main = library(
   'benchmark-main',
   benchmark_main_sources,
   include_directories: inc,
-  cpp_args: args,
   dependencies: google_benchmark_dep,
+  cpp_args: args,
 )
 
 google_benchmark_main_dep = declare_dependency(
-  compile_args: dargs,
-  link_with: lib_benchmark_main,
   dependencies: google_benchmark_dep,
+  link_with: lib_benchmark_main,
+  compile_args: dargs,
 )
 
 if not get_option('tests').disabled()

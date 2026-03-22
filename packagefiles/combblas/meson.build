@@ -24,14 +24,5 @@ mpi_dep = subproject('mpi').get_variable('mpi_cpp_dep')
 assert(mpi_dep.found(), 'MPI not found!')
 deps = [mpi_dep]
 
-combblas_lib = shared_library(
-  'combblas',
-  src,
-  include_directories: inc,
-  dependencies: deps,
-)
-combblas_dep = declare_dependency(
-  link_with: combblas_lib,
-  include_directories: inc,
-  dependencies: deps,
-)
+combblas_lib = shared_library('combblas', src, include_directories: inc, dependencies: deps)
+combblas_dep = declare_dependency(include_directories: inc, dependencies: deps, link_with: combblas_lib)

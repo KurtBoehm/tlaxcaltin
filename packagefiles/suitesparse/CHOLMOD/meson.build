@@ -336,19 +336,19 @@ cholmod_deps = (
 cholmod_lib = shared_library(
   'cholmod',
   cholmod_src,
-  dependencies: cholmod_deps,
   include_directories: [
     include_directories('Include'),
     include_directories('SuiteSparse_metis/include'),
     include_directories('SuiteSparse_metis/GKlib'),
     include_directories('SuiteSparse_metis/libmetis'),
   ],
+  dependencies: cholmod_deps,
   version: '5',
 )
 
 cholmod_dep = declare_dependency(
-  link_with: cholmod_lib,
   include_directories: include_directories('Include'),
   dependencies: cholmod_deps,
+  link_with: cholmod_lib,
   version: '5.3.4',
 )

@@ -58,12 +58,9 @@ parmetis_lib = shared_library(
     'libparmetis/wspace.c',
     'libparmetis/xyzpart.c',
   ],
-  c_args: ['-DIDXTYPEWIDTH=64', '-DREALTYPEWIDTH=64'],
   include_directories: [include, include_directories('libparmetis/')],
   dependencies: [gklib_dep, metis_dep, mpi_dep, m_dep],
+  c_args: ['-DIDXTYPEWIDTH=64', '-DREALTYPEWIDTH=64'],
 )
 
-parmetis_dep = declare_dependency(
-  link_with: parmetis_lib,
-  include_directories: include,
-)
+parmetis_dep = declare_dependency(include_directories: include, link_with: parmetis_lib)

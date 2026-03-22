@@ -39,18 +39,18 @@ foreach version : [3, 5]
   scotchmetis_lib = shared_library(
     f'scotchmetis@version@',
     scotchmetis_sources,
-    c_args: args,
     include_directories: [include_directories('.')],
     dependencies: deps,
+    c_args: args,
     version: scotch_version_long,
   )
   scotchmetis_deps += [
     declare_dependency(
-      link_with: scotchmetis_lib,
       sources: [metis_h_gen],
-      compile_args: args,
-      dependencies: deps,
       include_directories: include_directories('.'),
+      dependencies: deps,
+      link_with: scotchmetis_lib,
+      compile_args: args,
     ),
   ]
 endforeach
@@ -84,18 +84,18 @@ if build_ptscotch
     ptscotchparmetis_lib = shared_library(
       f'ptscotchparmetis@version@',
       ptscotchparmetis_sources,
-      c_args: args,
       include_directories: [include_directories('.')],
       dependencies: deps,
+      c_args: args,
       version: scotch_version_long,
     )
     ptscotchparmetis_deps += [
       declare_dependency(
-        link_with: ptscotchparmetis_lib,
         sources: [parmetis_h_gen],
-        compile_args: args,
-        dependencies: deps,
         include_directories: include_directories('.'),
+        dependencies: deps,
+        link_with: ptscotchparmetis_lib,
+        compile_args: args,
       ),
     ]
   endforeach

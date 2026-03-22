@@ -13,14 +13,14 @@ config_inc = include_directories('.')
 config_lib = shared_library(
   'suitesparseconfig',
   config_src,
-  dependencies: base_deps,
   include_directories: config_inc,
+  dependencies: base_deps,
   version: '7',
 )
 
 config_dep = declare_dependency(
-  link_with: config_lib,
-  dependencies: base_deps,
   include_directories: config_inc,
+  dependencies: base_deps,
+  link_with: config_lib,
   version: '7.12.2',
 )

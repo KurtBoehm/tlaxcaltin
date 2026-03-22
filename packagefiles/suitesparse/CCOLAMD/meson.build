@@ -13,14 +13,14 @@ ccolamd_inc = include_directories('Include')
 ccolamd_lib = shared_library(
   'ccolamd',
   ccolamd_src,
-  dependencies: base_deps + [config_dep],
   include_directories: ccolamd_inc,
+  dependencies: base_deps + [config_dep],
   version: '3',
 )
 
 ccolamd_dep = declare_dependency(
-  link_with: ccolamd_lib,
   include_directories: ccolamd_inc,
   dependencies: base_deps + [config_dep],
+  link_with: ccolamd_lib,
   version: '3.3.5',
 )

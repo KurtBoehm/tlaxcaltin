@@ -69,14 +69,14 @@ klu_inc = include_directories('Include')
 klu_lib = shared_library(
   'klu',
   klu_src,
-  dependencies: base_deps + [config_dep, amd_dep, btf_dep, colamd_dep],
   include_directories: klu_inc,
+  dependencies: base_deps + [config_dep, amd_dep, btf_dep, colamd_dep],
   version: '2',
 )
 
 klu_dep = declare_dependency(
-  link_with: klu_lib,
   include_directories: klu_inc,
   dependencies: base_deps + [config_dep, amd_dep, btf_dep, colamd_dep],
+  link_with: klu_lib,
   version: '2.3.6',
 )

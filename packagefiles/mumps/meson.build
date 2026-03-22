@@ -128,13 +128,10 @@ pord_lib = library(
   'pord',
   pord_src,
   include_directories: pord_inc,
-  c_args: mumps_cflags,
   pic: true,
+  c_args: mumps_cflags,
 )
-pord_dep = declare_dependency(
-  link_with: pord_lib,
-  include_directories: pord_inc,
-)
+pord_dep = declare_dependency(include_directories: pord_inc, link_with: pord_lib)
 
 ########################
 # MUMPS common sources #
@@ -337,32 +334,32 @@ inc_pub = [include_directories('include'), include_directories('gen_defs')]
 mumps_common_c = static_library(
   'mumps_common_c',
   comm_other_c,
-  dependencies: [mpi_c_dep, common_deps],
   include_directories: [inc_src, inc_pub],
-  c_args: [mumps_cflags, ordering_defs],
+  dependencies: [mpi_c_dep, common_deps],
   pic: true,
+  c_args: [mumps_cflags, ordering_defs],
 )
 mumps_common_fortran = static_library(
   'mumps_common_fortran',
   [comm_src_fortran, comm_other_fortran],
-  dependencies: [mpi_f_dep, openmp_f_dep, common_deps],
   include_directories: [inc_src, inc_pub],
+  dependencies: [mpi_f_dep, openmp_f_dep, common_deps],
   override_options: ['warning_level=0'],
-  fortran_args: [mumps_fflags, ordering_defs, scalapack_defs, gemmt_defs],
   pic: true,
+  fortran_args: [mumps_fflags, ordering_defs, scalapack_defs, gemmt_defs],
 )
 
 mumps_common_lib = library(
   'mumps_common',
+  include_directories: [inc_src, inc_pub],
   dependencies: [mpi_c_dep, mpi_f_dep, openmp_f_dep, common_deps],
   link_whole: [mumps_common_c, mumps_common_fortran],
-  include_directories: [inc_src, inc_pub],
   version: meson.project_version(),
 )
 mumps_common_dep = declare_dependency(
+  include_directories: inc_pub,
   dependencies: [mpi_c_dep, mpi_f_dep, openmp_f_dep, common_deps],
   link_with: [mumps_common_lib],
-  include_directories: inc_pub,
   version: meson.project_version(),
 )
 
@@ -489,19 +486,19 @@ foreach a : num_prefixes
   a_mumps_c_lib = static_library(
     f'@a@mumps_c',
     [cint_src, src_c],
-    dependencies: [mpi_c_dep, mumps_common_dep],
     include_directories: inc_pub,
-    c_args: [mumps_cflags, a_defs],
+    dependencies: [mpi_c_dep, mumps_common_dep],
     pic: true,
+    c_args: [mumps_cflags, a_defs],
   )
   a_mumps_f_lib = static_library(
     f'@a@mumps_fortran',
     src_fortran,
-    dependencies: [mpi_f_dep, openmp_f_dep, mumps_common_dep],
     include_directories: [inc_src, inc_pub],
+    dependencies: [mpi_f_dep, openmp_f_dep, mumps_common_dep],
     override_options: ['warning_level=0'],
-    fortran_args: [mumps_fflags, a_defs, scalapack_defs, a_gemmt_defs],
     pic: true,
+    fortran_args: [mumps_fflags, a_defs, scalapack_defs, a_gemmt_defs],
   )
 
   a_mumps_lib = library(
@@ -524,8 +521,8 @@ mumps_lib = library(
   version: meson.project_version(),
 )
 mumps_dep = declare_dependency(
+  include_directories: inc_pub,
   dependencies: [mpi_c_dep, mpi_f_dep, openmp_f_dep, mumps_common_dep],
   link_with: mumps_lib,
-  include_directories: inc_pub,
   version: meson.project_version(),
 )

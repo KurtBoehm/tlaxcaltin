@@ -18,7 +18,4 @@ inotify_cpp_lib = static_library(
   ],
   include_directories: inc,
 )
-inotify_cpp_dep = declare_dependency(
-  include_directories: inc,
-  link_with: inotify_cpp_lib,
-)
+inotify_cpp_dep = declare_dependency(include_directories: inc, link_with: inotify_cpp_lib)

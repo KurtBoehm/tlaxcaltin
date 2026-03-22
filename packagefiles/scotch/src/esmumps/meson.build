@@ -58,14 +58,14 @@ esmumps_lib = library(
   sources: [esmumps_src, esmumps_headers, esmumps_h, scotch_h],
   include_directories: [libscotch_inc],
   dependencies: [scotch_dep],
+  link_args: esmumps_link_args,
   version: scotch_version_long,
   soversion: f'@scotch_version@.@scotch_release@',
-  link_args: esmumps_link_args,
 )
 esmumps_dep = declare_dependency(
-  link_with: esmumps_lib,
-  include_directories: [libscotch_inc],
   sources: [scotch_h],
+  include_directories: [libscotch_inc],
+  link_with: esmumps_lib,
 )
 meson.override_dependency('esmumps', esmumps_dep)
 
@@ -79,14 +79,14 @@ if build_ptscotch
     sources: [esmumps_src, esmumps_headers, esmumps_h, scotch_h],
     include_directories: [libscotch_inc],
     dependencies: [ptscotch_dep],
+    link_args: esmumps_link_args,
     version: scotch_version_long,
     soversion: f'@scotch_version@.@scotch_release@',
-    link_args: esmumps_link_args,
   )
   ptesmumps_dep = declare_dependency(
-    link_with: ptesmumps_lib,
-    include_directories: [libscotch_inc],
     sources: [scotch_h],
+    include_directories: [libscotch_inc],
+    link_with: ptesmumps_lib,
   )
   meson.override_dependency('ptesmumps', ptesmumps_dep)
 endif

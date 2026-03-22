@@ -959,14 +959,14 @@ omp_lib = library(
 ginkgo_lib = library(
   'ginkgo',
   core_src + devices_src,
+  include_directories: include_directories('include'),
   dependencies: [hwloc_dep, metis_dep, mpi_dep],
   link_with: [omp_lib, reference_lib],
-  include_directories: include_directories('include'),
 )
 ginkgo_dep = declare_dependency(
-  link_with: [ginkgo_lib, omp_lib, reference_lib],
-  dependencies: [metis_dep, mpi_dep, omp_dep],
   include_directories: include_directories('include'),
+  dependencies: [metis_dep, mpi_dep, omp_dep],
+  link_with: [ginkgo_lib, omp_lib, reference_lib],
 )
 
 if get_option('examples')

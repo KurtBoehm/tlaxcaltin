@@ -4,8 +4,4 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-executable(
-  'ginkgo-ranges',
-  'ginkgo-ranges.cpp',
-  dependencies: examples_deps,
-)
+executable('ginkgo-ranges', 'ginkgo-ranges.cpp', dependencies: examples_deps)

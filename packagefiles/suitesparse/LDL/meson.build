@@ -13,14 +13,14 @@ ldl_inc = include_directories('Include')
 ldl_lib = shared_library(
   'ldl',
   ldl_src,
-  dependencies: base_deps + [config_dep],
   include_directories: ldl_inc,
+  dependencies: base_deps + [config_dep],
   version: '3',
 )
 
 ldl_dep = declare_dependency(
-  link_with: ldl_lib,
   include_directories: ldl_inc,
   dependencies: base_deps + [config_dep],
+  link_with: ldl_lib,
   version: '3.3.3',
 )

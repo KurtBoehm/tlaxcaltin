@@ -10,14 +10,14 @@ rbio_inc = include_directories('Include')
 rbio_lib = shared_library(
   'rbio',
   rbio_src,
-  dependencies: base_deps + [config_dep],
   include_directories: rbio_inc,
+  dependencies: base_deps + [config_dep],
   version: '4',
 )
 
 rbio_dep = declare_dependency(
-  link_with: rbio_lib,
   include_directories: rbio_inc,
   dependencies: base_deps + [config_dep],
+  link_with: rbio_lib,
   version: '4.3.5',
 )

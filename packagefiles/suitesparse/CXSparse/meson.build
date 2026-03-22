@@ -216,14 +216,14 @@ cxsparse_inc = include_directories('Include')
 cxsparse_lib = shared_library(
   'cxsparse',
   cxsparse_src,
-  dependencies: base_deps + [config_dep],
   include_directories: cxsparse_inc,
+  dependencies: base_deps + [config_dep],
   version: '4',
 )
 
 cxsparse_dep = declare_dependency(
-  link_with: cxsparse_lib,
   include_directories: cxsparse_inc,
   dependencies: base_deps + [config_dep],
+  link_with: cxsparse_lib,
   version: '4.4.2',
 )

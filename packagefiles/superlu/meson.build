@@ -222,8 +222,8 @@ superlu_lib = shared_library(
   dependencies: deps,
 )
 superlu_dep = declare_dependency(
-  link_with: superlu_lib,
+  sources: superlu_config,
   include_directories: inc,
   dependencies: deps,
-  sources: superlu_config,
+  link_with: superlu_lib,
 )

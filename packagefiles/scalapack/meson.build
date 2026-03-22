@@ -65,17 +65,17 @@ scalapack_lib = library(
     src,
     src_c,
   ],
-  c_args: c_args,
-  fortran_args: no_implicit_args,
   dependencies: [mpi_c_dep, mpi_f_dep, lapack_dep, blas_dep],
   link_whole: [blacs_cint_lib],
+  c_args: c_args,
+  fortran_args: no_implicit_args,
+  install: true,
   version: scalapack_version,
   soversion: f'@scalapack_version_major@.@scalapack_version_minor@',
-  install: true,
 )
 scalapack_dep = declare_dependency(
-  link_with: scalapack_lib,
   dependencies: [mpi_c_dep, mpi_f_dep, lapack_dep, blas_dep],
+  link_with: scalapack_lib,
   version: scalapack_version,
 )
 

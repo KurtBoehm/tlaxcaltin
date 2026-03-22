@@ -66,11 +66,7 @@ foreach name, info : {
   if is_enabled
     test(
       name,
-      executable(
-        name + 'Test',
-        sources,
-        dependencies: [dune_istl_dep],
-      ),
+      executable(name + 'Test', sources, dependencies: [dune_istl_dep]),
     )
   endif
 endforeach

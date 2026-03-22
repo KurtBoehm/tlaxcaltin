@@ -9,11 +9,7 @@ scotch_deterministic = get_option('scotch_deterministic')
 
 libscotch_inc = [include_directories('.')]
 
-dummysizes_exe = executable(
-  'dummysizes',
-  'dummysizes.c',
-  c_args: c_args,
-)
+dummysizes_exe = executable('dummysizes', 'dummysizes.c', c_args: c_args)
 scotch_h = custom_target(
   'scotch_h',
   input: ['library.h'],
@@ -36,8 +32,8 @@ if build_ptscotch
   ptdummysizes_exe = executable(
     'ptdummysizes',
     'dummysizes.c',
-    c_args: c_args + ['-DSCOTCH_PTSCOTCH'],
     dependencies: [mpi_dep],
+    c_args: c_args + ['-DSCOTCH_PTSCOTCH'],
   )
   ptscotch_h = custom_target(
     'ptscotch_h',
@@ -333,16 +329,16 @@ scotch_gen = [scotch_h, scotchf_h]
 scotcherr_lib = library(
   'scotcherr',
   ['library_error.c', scotch_gen],
-  c_args: c_args,
   include_directories: libscotch_inc,
+  c_args: c_args,
   version: scotch_version_long,
   soversion: f'@scotch_version@.@scotch_release@',
 )
 scotcherr_dep = declare_dependency(
+  sources: scotch_gen,
+  include_directories: include_directories('.'),
   link_with: scotcherr_lib,
   compile_args: c_args,
-  include_directories: include_directories('.'),
-  sources: scotch_gen,
   version: scotch_version_long,
 )
 meson.override_dependency('scotcherr', scotcherr_dep)
@@ -350,16 +346,16 @@ meson.override_dependency('scotcherr', scotcherr_dep)
 scotcherrexit_lib = library(
   'scotcherrexit',
   ['library_error_exit.c', scotch_gen],
-  c_args: c_args,
   include_directories: libscotch_inc,
+  c_args: c_args,
   version: scotch_version_long,
   soversion: f'@scotch_version@.@scotch_release@',
 )
 scotcherrexit_dep = declare_dependency(
+  sources: scotch_gen,
+  include_directories: include_directories('.'),
   link_with: scotcherrexit_lib,
   compile_args: c_args,
-  include_directories: include_directories('.'),
-  sources: scotch_gen,
   version: scotch_version_long,
 )
 meson.override_dependency('scotcherrexit', scotcherrexit_dep)
@@ -404,18 +400,18 @@ endif
 scotch_lib = library(
   'scotch',
   [scotch_src, scotch_gen],
-  c_args: scotch_args,
   include_directories: libscotch_inc,
   dependencies: scotch_deps,
+  c_args: scotch_args,
   version: scotch_version_long,
   soversion: f'@scotch_version@.@scotch_release@',
 )
 scotch_dep = declare_dependency(
-  link_with: scotch_lib,
-  compile_args: scotch_args,
+  sources: scotch_gen,
   include_directories: include_directories('.'),
   dependencies: scotch_deps,
-  sources: scotch_gen,
+  link_with: scotch_lib,
+  compile_args: scotch_args,
   version: scotch_version_long,
 )
 meson.override_dependency('scotch', scotch_dep)
@@ -578,16 +574,16 @@ if build_ptscotch
   ptscotcherr_lib = library(
     'ptscotcherr',
     ['library_error.c', ptscotch_gen],
-    c_args: c_args,
     include_directories: libscotch_inc,
+    c_args: c_args,
     version: scotch_version_long,
     soversion: f'@scotch_version@.@scotch_release@',
   )
   ptscotcherr_dep = declare_dependency(
+    sources: ptscotch_gen,
+    include_directories: include_directories('.'),
     link_with: ptscotcherr_lib,
     compile_args: c_args,
-    include_directories: include_directories('.'),
-    sources: ptscotch_gen,
     version: scotch_version_long,
   )
   meson.override_dependency('ptscotcherr', ptscotcherr_dep)
@@ -595,16 +591,16 @@ if build_ptscotch
   ptscotcherrexit_lib = library(
     'ptscotcherrexit',
     ['library_error_exit.c', ptscotch_gen],
-    c_args: c_args,
     include_directories: libscotch_inc,
+    c_args: c_args,
     version: scotch_version_long,
     soversion: f'@scotch_version@.@scotch_release@',
   )
   ptscotcherrexit_dep = declare_dependency(
+    sources: ptscotch_gen,
+    include_directories: include_directories('.'),
     link_with: ptscotcherrexit_lib,
     compile_args: c_args,
-    include_directories: include_directories('.'),
-    sources: ptscotch_gen,
     version: scotch_version_long,
   )
   meson.override_dependency('ptscotcherrexit', ptscotcherrexit_dep)
@@ -620,18 +616,18 @@ if build_ptscotch
   ptscotch_lib = library(
     'ptscotch',
     [ptscotch_src, ptscotch_gen],
-    c_args: ptscotch_args,
     include_directories: libscotch_inc,
     dependencies: ptscotch_deps,
+    c_args: ptscotch_args,
     version: scotch_version_long,
     soversion: f'@scotch_version@.@scotch_release@',
   )
   ptscotch_dep = declare_dependency(
-    link_with: ptscotch_lib,
-    compile_args: ptscotch_args,
+    sources: ptscotch_gen,
     include_directories: include_directories('.'),
     dependencies: ptscotch_deps,
-    sources: ptscotch_gen,
+    link_with: ptscotch_lib,
+    compile_args: ptscotch_args,
     version: scotch_version_long,
   )
   meson.override_dependency('ptscotch', ptscotch_dep)

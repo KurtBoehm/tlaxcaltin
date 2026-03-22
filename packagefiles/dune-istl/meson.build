@@ -118,9 +118,9 @@ config_h = configure_file(
 )
 
 dune_istl_dep = declare_dependency(
-  compile_args: args,
-  dependencies: deps,
   include_directories: include_directories('.'),
+  dependencies: deps,
+  compile_args: args,
 )
 
 if get_option('test')

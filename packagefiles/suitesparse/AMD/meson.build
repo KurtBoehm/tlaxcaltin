@@ -36,14 +36,14 @@ amd_inc = include_directories('Include')
 amd_lib = shared_library(
   'amd',
   amd_src,
-  dependencies: base_deps + [config_dep],
   include_directories: amd_inc,
+  dependencies: base_deps + [config_dep],
   version: '3',
 )
 
 amd_dep = declare_dependency(
-  link_with: amd_lib,
-  dependencies: base_deps + [config_dep],
   include_directories: amd_inc,
+  dependencies: base_deps + [config_dep],
+  link_with: amd_lib,
   version: '3.3.4',
 )

@@ -17,14 +17,14 @@ btf_inc = include_directories('Include')
 btf_lib = shared_library(
   'btf',
   btf_src,
-  dependencies: base_deps + [config_dep],
   include_directories: btf_inc,
+  dependencies: base_deps + [config_dep],
   version: '2',
 )
 
 btf_dep = declare_dependency(
-  link_with: btf_lib,
   include_directories: btf_inc,
   dependencies: base_deps + [config_dep],
+  link_with: btf_lib,
   version: '2.3.3',
 )

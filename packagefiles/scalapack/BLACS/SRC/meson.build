@@ -184,8 +184,8 @@ blacs_cint_lib = static_library(
   'blacs_cint',
   blacs_fint_srcs,
   dependencies: [mpi_c_dep, mpi_f_dep, lapack_dep, blas_dep],
-  c_args: ['-DCallFromC', c_args],
   pic: true,
+  c_args: ['-DCallFromC', c_args],
 )
 
 # Expose total BLACS sources (Fortran-entry-side + internal) to top level

@@ -103,7 +103,7 @@ arpack_ng_lib = shared_library(
   dependencies: deps,
 )
 arpack_ng_dep = declare_dependency(
-  link_with: arpack_ng_lib,
   include_directories: arpack_ng_inc,
   dependencies: deps,
+  link_with: arpack_ng_lib,
 )

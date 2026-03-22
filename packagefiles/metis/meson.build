@@ -55,8 +55,4 @@ metis_lib = shared_library(
   dependencies: deps,
 )
 
-metis_dep = declare_dependency(
-  link_with: metis_lib,
-  include_directories: include,
-  dependencies: deps,
-)
+metis_dep = declare_dependency(include_directories: include, dependencies: deps, link_with: metis_lib)

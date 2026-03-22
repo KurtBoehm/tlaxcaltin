@@ -29,8 +29,8 @@ if cpp.get_argument_syntax() == 'msvc'
   gmock_lib = static_library(
     'gmock-all',
     files('../googletest/src/gtest-all.cc', 'src/gmock-all.cc'),
-    override_options: override_cpp,
     include_directories: [gtest_incdir, gmock_incdir],
+    override_options: override_cpp,
   )
 
   gmock_main_lib = static_library(
@@ -40,14 +40,11 @@ if cpp.get_argument_syntax() == 'msvc'
       'src/gmock-all.cc',
       'src/gmock_main.cc',
     ),
-    override_options: override_cpp,
     include_directories: [gtest_incdir, gmock_incdir],
+    override_options: override_cpp,
   )
 
-  gmock_dep = declare_dependency(
-    include_directories: [gtest_incdir, gmock_incdir],
-    link_with: gmock_lib,
-  )
+  gmock_dep = declare_dependency(include_directories: [gtest_incdir, gmock_incdir], link_with: gmock_lib)
 
   gmock_main_dep = declare_dependency(
     include_directories: [gtest_incdir, gmock_incdir],
@@ -57,32 +54,29 @@ else
   gmock_lib = library(
     'gmock-all',
     files('src/gmock-all.cc'),
+    include_directories: [gtest_incdir, gmock_incdir],
     #can't do the following because of dllimport
     #dependencies: gtest_dep,
-    override_options: override_cpp,
     dependencies: dependency('threads'),
-    include_directories: [gtest_incdir, gmock_incdir],
     link_with: gtest_lib,
+    override_options: override_cpp,
   )
 
   gmock_main_lib = library(
     'gmock_main',
     files('src/gmock_main.cc'),
-    # can't do the following because of dllimport
-    # dependencies: gmock_dep,
-    override_options: override_cpp,
     include_directories: [gtest_incdir, gmock_incdir],
+    #can't do the following because of dllimport
+    #dependencies: gtest_dep,
     link_with: [gtest_lib, gmock_lib],
+    override_options: override_cpp,
   )
 
   gmock_dep = declare_dependency(
     include_directories: gmock_incdir,
-    link_with: gmock_lib,
     dependencies: gtest_dep,
+    link_with: gmock_lib,
   )
 
-  gmock_main_dep = declare_dependency(
-    link_with: gmock_main_lib,
-    dependencies: gmock_dep,
-  )
+  gmock_main_dep = declare_dependency(dependencies: gmock_dep, link_with: gmock_main_lib)
 endif

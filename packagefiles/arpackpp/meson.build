@@ -14,6 +14,7 @@ project(
 
 suitesparse = subproject('suitesparse')
 arpackpp_dep = declare_dependency(
+  include_directories: [include_directories('include')],
   dependencies: [
     dependency('blas'),
     dependency('arpack-ng'),
@@ -22,7 +23,6 @@ arpackpp_dep = declare_dependency(
     suitesparse.get_variable('cholmod_dep'),
     suitesparse.get_variable('umfpack_dep'),
   ],
-  include_directories: [include_directories('include')],
 )
 
 if get_option('examples')

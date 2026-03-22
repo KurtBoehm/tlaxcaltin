@@ -33,14 +33,14 @@ camd_inc = include_directories('Include')
 camd_lib = shared_library(
   'camd',
   camd_src,
-  dependencies: base_deps + [config_dep],
   include_directories: camd_inc,
+  dependencies: base_deps + [config_dep],
   version: '3',
 )
 
 camd_dep = declare_dependency(
-  link_with: camd_lib,
   include_directories: camd_inc,
   dependencies: base_deps + [config_dep],
+  link_with: camd_lib,
   version: '3.3.5',
 )

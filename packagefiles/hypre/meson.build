@@ -633,4 +633,4 @@ deps = [
 ]
 
 hypre_lib = shared_library('hypre', src, include_directories: inc, dependencies: deps)
-hypre_dep = declare_dependency(link_with: hypre_lib, include_directories: inc, dependencies: deps)
+hypre_dep = declare_dependency(include_directories: inc, dependencies: deps, link_with: hypre_lib)

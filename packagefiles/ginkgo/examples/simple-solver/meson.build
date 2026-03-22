@@ -4,9 +4,5 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-executable(
-  'simple-solver',
-  'simple-solver.cpp',
-  dependencies: examples_deps,
-)
+executable('simple-solver', 'simple-solver.cpp', dependencies: examples_deps)
 subdir('data')

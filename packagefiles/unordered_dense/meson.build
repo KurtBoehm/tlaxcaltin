@@ -8,6 +8,4 @@ project('unordered-dense', 'cpp', version: '4.8.1', license: 'MIT')
 
 install_headers(['include/ankerl/unordered_dense.h'], subdir: 'ankerl')
 
-unordered_dense_dep = declare_dependency(
-  include_directories: include_directories('include'),
-)
+unordered_dense_dep = declare_dependency(include_directories: include_directories('include'))

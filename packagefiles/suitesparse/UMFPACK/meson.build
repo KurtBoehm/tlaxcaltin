@@ -353,14 +353,14 @@ umfpack_dep = base_deps + [blas_dep, amd_dep, cholmod_dep]
 umfpack_lib = shared_library(
   'umfpack',
   umfpack_src,
-  dependencies: umfpack_dep,
   include_directories: [umfpack_inc, include_directories('Source')],
+  dependencies: umfpack_dep,
   version: '6',
 )
 
 umfpack_dep = declare_dependency(
-  link_with: umfpack_lib,
-  dependencies: umfpack_dep,
   include_directories: umfpack_inc,
+  dependencies: umfpack_dep,
+  link_with: umfpack_lib,
   version: '6.3.7',
 )

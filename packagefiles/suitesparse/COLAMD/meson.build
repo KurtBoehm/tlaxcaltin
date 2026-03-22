@@ -13,14 +13,14 @@ colamd_inc = include_directories('Include')
 colamd_lib = shared_library(
   'colamd',
   colamd_src,
-  dependencies: base_deps + [config_dep],
   include_directories: colamd_inc,
+  dependencies: base_deps + [config_dep],
   version: '3',
 )
 
 colamd_dep = declare_dependency(
-  link_with: colamd_lib,
   include_directories: colamd_inc,
   dependencies: base_deps + [config_dep],
+  link_with: colamd_lib,
   version: '3.3.5',
 )

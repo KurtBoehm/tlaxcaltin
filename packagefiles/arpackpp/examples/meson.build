@@ -152,8 +152,8 @@ foreach file : sources
     executable(
       name + '-test',
       file,
-      dependencies: [arpackpp_dep],
       include_directories: test_inc,
+      dependencies: [arpackpp_dep],
     ),
   )
 endforeach

@@ -242,15 +242,15 @@ dune_common_src = [
 dune_common_lib = shared_library(
   'dune_common',
   dune_common_src,
-  cpp_args: args,
-  dependencies: deps,
   include_directories: [dune_common_inc],
+  dependencies: deps,
+  cpp_args: args,
 )
 dune_common_dep = declare_dependency(
+  include_directories: [dune_common_inc],
+  dependencies: deps,
   link_with: dune_common_lib,
   compile_args: args,
-  dependencies: deps,
-  include_directories: [dune_common_inc],
 )
 
 if get_option('test')

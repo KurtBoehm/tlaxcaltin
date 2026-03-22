@@ -4,8 +4,4 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-executable(
-  'kokkos-assembly',
-  'kokkos-assembly.cpp',
-  dependencies: examples_deps,
-)
+executable('kokkos-assembly', 'kokkos-assembly.cpp', dependencies: examples_deps)
