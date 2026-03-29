@@ -4,16 +4,23 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-# Level of determinism in Scotch
+option(
+  'mpi_implementation',
+  type: 'combo',
+  choices: ['openmpi', 'mpich', 'auto', 'none'],
+  value: 'auto',
+  yield: true,
+)
+
 option(
   'scotch_deterministic',
   type: 'combo',
   choices: ['none', 'fixed_seed', 'full'],
   value: 'none',
   yield: true,
+  description: 'Level of determinism in Scotch',
 )
 
-# Set integer size: by default, use compiler int size
 option(
   'int_size',
   type: 'integer',
@@ -21,7 +28,6 @@ option(
   description: 'Integer size: empty string stands for C compiler int type size',
 )
 
-# Thread support
 option(
   'threads',
   type: 'boolean',
@@ -29,7 +35,6 @@ option(
   description: 'Use multi-threading in Scotch and PT-Scotch',
 )
 
-# Force MPI with threads
 option(
   'force_mpi_multithread',
   type: 'boolean',
@@ -37,7 +42,6 @@ option(
   description: 'Force using multi-threaded MPI in PT-Scotch',
 )
 
-# Build PT-Scotch
 option(
   'build_ptscotch',
   type: 'boolean',
@@ -45,7 +49,6 @@ option(
   description: 'Build PT-Scotch',
 )
 
-# Build libESMUMPS
 option(
   'build_libesmumps',
   type: 'boolean',
@@ -53,7 +56,6 @@ option(
   description: 'Build EsMUMPS library',
 )
 
-# Build libScotchMeTiS
 option(
   'build_libscotchmetis',
   type: 'boolean',
@@ -61,7 +63,6 @@ option(
   description: 'Build ScotchMeTiS library',
 )
 
-# Install our MeTiS header stubs
 option(
   'install_metis_headers',
   type: 'boolean',
@@ -69,7 +70,6 @@ option(
   description: 'Install libScotchMeTiS headers in destination directory',
 )
 
-# The name suffix
 option(
   'name_suffix',
   type: 'string',

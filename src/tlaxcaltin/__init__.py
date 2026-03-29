@@ -10,6 +10,7 @@ from .update import update
 
 class UpdateArgs(BaseModel):
     mode: Literal["update"]
+    no_add: bool
     project_path: Path | None
 
 
@@ -21,6 +22,7 @@ def run():
     subparsers = parser.add_subparsers(dest="mode")
 
     update_parser = subparsers.add_parser("update")
+    update_parser.add_argument("--no-add", "-n", action="store_true")
     update_parser.add_argument("project_path", nargs="?")
 
     autocomplete(parser)
@@ -28,4 +30,4 @@ def run():
 
     match args:
         case UpdateArgs():
-            update(args.project_path or Path.cwd())
+            update(args.project_path or Path.cwd(), not args.no_add)

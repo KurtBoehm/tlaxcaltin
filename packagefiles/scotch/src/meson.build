@@ -29,7 +29,6 @@ if has_posix_timers and not clock_gettime_compiles
 endif
 
 threads_dep = dependency('threads', required: false)
-mpi_dep = subproject('mpi').get_variable('mpi_c_dep')
 
 c_args += [
   '-Drestrict=__restrict',
@@ -72,9 +71,14 @@ if use_threads
 endif
 
 build_ptscotch = get_option('build_ptscotch')
-force_mpi_multithread = get_option('force_mpi_multithread')
+if get_option('mpi_implementation') == 'none' and build_ptscotch
+  warning('PT-Scotch is disabled in a non-MPI build.')
+  build_ptscotch = false
+endif
+
 if build_ptscotch
-  assert(mpi_dep.found(), 'PT-Scotch cannot be built without MPI!')
+  force_mpi_multithread = get_option('force_mpi_multithread')
+  mpi_dep = subproject('mpi').get_variable('mpi_c_dep')
   # TODO No oversubscribe check
   if threads_dep.found()
     if force_mpi_multithread

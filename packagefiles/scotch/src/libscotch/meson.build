@@ -15,14 +15,12 @@ scotch_h = custom_target(
   input: ['library.h'],
   output: ['scotch.h'],
   command: [dummysizes_exe, '-s' + name_suffix, '@INPUT@', '@OUTPUT@'],
-  build_by_default: true,
 )
 scotchf_h = custom_target(
   'scotchf_h',
   input: ['library_f.h'],
   output: ['scotchf.h'],
   command: [dummysizes_exe, '-s' + name_suffix, '@INPUT@', '@OUTPUT@'],
-  build_by_default: true,
 )
 
 ptdummysizes_exe = []
@@ -40,7 +38,6 @@ if build_ptscotch
     input: ['library_pt.h'],
     output: ['ptscotch.h'],
     command: [ptdummysizes_exe, '-s' + name_suffix, '@INPUT@', '@OUTPUT@'],
-    build_by_default: true,
   )
 
   ptscotchf_h = custom_target(
@@ -48,7 +45,6 @@ if build_ptscotch
     input: ['library_pt_f.h'],
     output: ['ptscotchf.h'],
     command: [ptdummysizes_exe, '-s' + name_suffix, '@INPUT@', '@OUTPUT@'],
-    build_by_default: true,
   )
 endif
 
@@ -67,7 +63,6 @@ if bison_prg.found()
       '--output=@OUTPUT1@',
       '@INPUT@',
     ],
-    build_by_default: true,
   )
 else
   parser_yy_gen = files('last_resort/parser_yy.c')
@@ -86,7 +81,6 @@ if flex_prg.found()
       '--outfile=@OUTPUT1@',
       '@INPUT@',
     ],
-    build_by_default: true,
   )
 else
   parser_ll_gen = files('last_resort/parser_ll.c')

@@ -54,7 +54,7 @@ def _expand_selection(subprojects_path: Path, selection: set[str]) -> set[str]:
     return new_selection
 
 
-def update(project_path: Path):
+def update(project_path: Path, add: bool):
     subprojects_path: Final = project_path / "subprojects"
     selection_path: Final = project_path / "subprojects.txt"
 
@@ -151,7 +151,8 @@ def update(project_path: Path):
             with open(gitignore_path, "w") as f:
                 f.write("".join(f"{line!s}\n" for line in new_gitignore))
 
-        run(["git", "add", "subprojects"], check=True)
+        if add:
+            run(["git", "add", "subprojects"], check=True)
 
         if has_packagecache:
             move(packagecache_tmp_path, package_cache_path)
