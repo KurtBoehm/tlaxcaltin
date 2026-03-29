@@ -1,0 +1,9 @@
+{
+  global:
+    cmumps_seq;
+    dmumps_seq;
+    smumps_seq;
+    zmumps_seq;
+  local:
+    *;
+};

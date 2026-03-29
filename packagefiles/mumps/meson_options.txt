@@ -8,7 +8,7 @@ option('build_double', type: 'boolean', value: true)
 option('build_single', type: 'boolean', value: true)
 option('build_complex', type: 'boolean', value: true)
 option('build_complex16', type: 'boolean', value: true)
-option('intsize64', type: 'boolean', value: true)
+option('intsize64', type: 'boolean', value: false)
 
 option('use_openmp', type: 'boolean', value: true)
 option('use_scotch', type: 'boolean', value: true)

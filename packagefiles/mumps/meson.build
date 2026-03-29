@@ -27,7 +27,9 @@ use_scalapack = get_option('use_scalapack')
 
 cc = meson.get_compiler('c')
 fc = meson.get_compiler('fortran')
+
 cc_gcc_compatible = ['gcc', 'clang'].contains(cc.get_id())
+fc_gcc_compatible = ['gcc', 'llvm-flang'].contains(fc.get_id())
 
 ########################
 # Common compile flags #
@@ -46,6 +48,9 @@ if cc_gcc_compatible
     '-Werror-implicit-function-declaration',
     '-fno-strict-aliasing',
   ]
+endif
+
+if fc_gcc_compatible
   mumps_fflags += [
     '-fno-strict-aliasing',
     '-fimplicit-none',
@@ -65,10 +70,46 @@ endif
 # External dependencies #
 #########################
 
-mpi_sub = subproject('mpi')
-mpi_c_dep = mpi_sub.get_variable('mpi_c_dep')
-mpi_f_dep = mpi_sub.get_variable('mpi_fortran_dep')
 threads_dep = dependency('threads')
+
+# Sequential backend: libseq
+libseq_inc = include_directories('libseq')
+
+libseq_c_lib = static_library(
+  'mpiseq_c',
+  files('libseq/elapse.c', 'libseq/mpic.c'),
+  include_directories: libseq_inc,
+  pic: true,
+  c_args: mumps_cflags,
+)
+
+libseq_f_lib = static_library(
+  'mpiseq_fortran',
+  files('libseq/mpi.f'),
+  include_directories: libseq_inc,
+  link_with: libseq_c_lib,
+  override_options: ['warning_level=0'],
+  pic: true,
+  fortran_args: mumps_fflags,
+)
+
+mpi_c_dep_seq = declare_dependency(
+  include_directories: libseq_inc,
+  link_with: libseq_c_lib,
+)
+mpi_f_dep_seq = declare_dependency(
+  include_directories: libseq_inc,
+  link_with: libseq_f_lib,
+)
+
+# Parallel backend: real MPI
+mpi_sub = subproject('mpi')
+mpi_c_dep_par = mpi_sub.get_variable('mpi_c_dep')
+mpi_f_dep_par = mpi_sub.get_variable('mpi_fortran_dep')
+
+##########
+# LAPACK #
+##########
 
 if intsize64
   idx_type_width = 64
@@ -78,21 +119,17 @@ else
   lapack_dep = dependency('lapack')
 endif
 
-if use_openmp
-  openmp_f_dep = dependency('openmp', language: 'fortran')
-else
-  openmp_f_dep = []
-endif
+##########
+# OpenMP #
+##########
+
+openmp_f_dep = use_openmp ? dependency('openmp', language: 'fortran') : []
 
 ##############################
 # mumps_int_def.h generation #
 ##############################
 
-if intsize64
-  int_def = 'src/mumps_int_def64_h.in'
-else
-  int_def = 'src/mumps_int_def32_h.in'
-endif
+int_def = intsize64 ? 'src/mumps_int_def64_h.in' : 'src/mumps_int_def32_h.in'
 
 configure_file(
   input: int_def,
@@ -220,109 +257,87 @@ endif
 # GEMMT detection #
 ###################
 
-have_dgemmt = false
+gemmt_test = '''
+program check
+  use, intrinsic :: iso_fortran_env, only : @0@
+  implicit none
+  external :: @1@
+  @2@, dimension(2,2) :: A, B, C
+  CALL @1@( 'U', 'N', 'T', 2, 1, 1._@0@, A, 2, B, 2, 1._@0@, C, 2 )
+end program
+'''
+
 have_sgemmt = false
+have_dgemmt = false
 have_cgemmt = false
 have_zgemmt = false
-
 num_prefixes = []
 
 if build_double
-  dgemmt_src = '''
-program check
-  use, intrinsic :: iso_fortran_env, only : real64
-  implicit none
-  external :: dgemmt
-  real(real64), dimension(2,2) :: A, B, C
-  CALL DGEMMT( 'U', 'N', 'T',  2 , 1 , 1._real64 , A , 2 , B , 2 , 1._real64 , C , 2 )
-end program
-'''
-  have_dgemmt = fc.compiles(dgemmt_src, name: 'Check DGEMMT', dependencies: lapack_dep)
+  src = gemmt_test.format('real64', 'dgemmt', 'real(real64)')
+  have_dgemmt = fc.compiles(src, name: 'Check DGEMMT', dependencies: lapack_dep)
   num_prefixes += ['d']
 endif
 
 if build_single
-  sgemmt_src = '''
-program check
-  use, intrinsic :: iso_fortran_env, only : real32
-  implicit none
-  external :: sgemmt
-  real(real32), dimension(2,2) :: A, B, C
-  CALL SGEMMT( 'U', 'N', 'T',  2 , 1 , 1._real32 , A , 2 , B , 2 , 1._real32 , C , 2 )
-end program
-'''
-  have_sgemmt = fc.compiles(sgemmt_src, name: 'Check SGEMMT', dependencies: lapack_dep)
+  src = gemmt_test.format('real32', 'sgemmt', 'real(real32)')
+  have_sgemmt = fc.compiles(src, name: 'Check SGEMMT', dependencies: lapack_dep)
   num_prefixes += ['s']
 endif
 
 if build_complex
-  cgemmt_src = '''
-program check
-  use, intrinsic :: iso_fortran_env, only : real32
-  implicit none
-  external :: cgemmt
-  complex(real32), dimension(2,2) :: A, B, C
-  CALL CGEMMT( 'U', 'N', 'T',  2 , 1 , 1._real32 , A , 2 , B , 2 , 1._real32 , C , 2 )
-end program
-'''
-  have_cgemmt = fc.compiles(cgemmt_src, name: 'Check CGEMMT', dependencies: lapack_dep)
+  src = gemmt_test.format('real32', 'cgemmt', 'complex(real32)')
+  have_cgemmt = fc.compiles(src, name: 'Check CGEMMT', dependencies: lapack_dep)
   num_prefixes += ['c']
 endif
 
 if build_complex16
-  zgemmt_src = '''
-program check
-  use, intrinsic :: iso_fortran_env, only : real64
-  implicit none
-  external :: zgemmt
-  complex(real64), dimension(2,2) :: A, B, C
-  CALL ZGEMMT( 'U', 'N', 'T',  2 , 1 , 1._real64 , A , 2 , B , 2 , 1._real64 , C , 2 )
-end program
-'''
-  have_zgemmt = fc.compiles(zgemmt_src, name: 'Check ZGEMMT', dependencies: lapack_dep)
+  src = gemmt_test.format('real64', 'zgemmt', 'complex(real64)')
+  have_zgemmt = fc.compiles(src, name: 'Check ZGEMMT', dependencies: lapack_dep)
   num_prefixes += ['z']
 endif
 
 blas_have_gemmt = have_sgemmt or have_dgemmt or have_cgemmt or have_zgemmt
+have_gemmt_map = {'s': have_sgemmt, 'd': have_dgemmt, 'c': have_cgemmt, 'z': have_zgemmt}
 
 #############################################
 # Common dependencies and preprocessor defs #
 #############################################
 
 common_deps = [pord_dep, lapack_dep, threads_dep]
-ordering_defs = ['-Dpord']
+common_deps_par = []
+common_defs = ['-Dpord']
+common_defs_par = []
 
 if use_metis
   common_deps += [dependency('metis')]
-  ordering_defs += ['-Dmetis', '-DREALTYPEWIDTH=32', f'-DIDXTYPEWIDTH=@idx_type_width@']
+  common_defs += ['-Dmetis', '-DREALTYPEWIDTH=32', f'-DIDXTYPEWIDTH=@idx_type_width@']
 endif
+
 if use_parmetis
   assert(use_metis, '"use_parmetis" requires "use_metis"')
-  common_deps += [dependency('parmetis')]
-  ordering_defs += ['-Dparmetis']
+  common_deps_par += [dependency('parmetis')]
+  common_defs_par += ['-Dparmetis']
 endif
 
 if use_scotch
   common_deps += [dependency('scotch'), dependency('scotcherr'), dependency('esmumps')]
-  ordering_defs += ['-Dscotch']
+  common_defs += ['-Dscotch']
 endif
+
 if use_ptscotch
   assert(use_scotch, '"use_ptscotch" requires "use_scotch"')
-  common_deps += [dependency('ptscotch'), dependency('ptscotcherr'), dependency('ptesmumps')]
-  ordering_defs += ['-Dptscotch']
+  common_deps_par += [dependency('ptscotch'), dependency('ptscotcherr'), dependency('ptesmumps')]
+  common_defs_par += ['-Dptscotch']
 endif
 
-scalapack_defs = []
 if use_scalapack
-  common_deps += [dependency('scalapack')]
+  common_deps_par += [dependency('scalapack')]
 else
-  scalapack_defs += ['-DNOSCALAPACK']
+  common_defs_par += ['-DNOSCALAPACK']
 endif
 
-gemmt_defs = []
-if blas_have_gemmt
-  gemmt_defs += ['-DGEMMT_AVAILABLE']
-endif
+common_deps_par = common_deps + common_deps_par
 
 ################
 # mumps_common #
@@ -331,43 +346,75 @@ endif
 inc_src = include_directories('src')
 inc_pub = [include_directories('include'), include_directories('gen_defs')]
 
-mumps_common_c = static_library(
-  'mumps_common_c',
-  comm_other_c,
-  include_directories: [inc_src, inc_pub],
-  dependencies: [mpi_c_dep, common_deps],
-  pic: true,
-  c_args: [mumps_cflags, ordering_defs],
-)
-mumps_common_fortran = static_library(
-  'mumps_common_fortran',
-  [comm_src_fortran, comm_other_fortran],
-  include_directories: [inc_src, inc_pub],
-  dependencies: [mpi_f_dep, openmp_f_dep, common_deps],
-  override_options: ['warning_level=0'],
-  pic: true,
-  fortran_args: [mumps_fflags, ordering_defs, scalapack_defs, gemmt_defs],
-)
+mumps_common_build = [
+  {
+    'name_suffix': 'seq',
+    'mpi_c_dep': mpi_c_dep_seq,
+    'mpi_f_dep': mpi_f_dep_seq,
+    'common_deps': common_deps,
+    'common_defs': common_defs,
+  },
+  {
+    'name_suffix': 'par',
+    'mpi_c_dep': mpi_c_dep_par,
+    'mpi_f_dep': mpi_f_dep_par,
+    'common_deps': common_deps_par,
+    'common_defs': common_defs + common_defs_par,
+  },
+]
 
-mumps_common_lib = library(
-  'mumps_common',
-  include_directories: [inc_src, inc_pub],
-  dependencies: [mpi_c_dep, mpi_f_dep, openmp_f_dep, common_deps],
-  link_whole: [mumps_common_c, mumps_common_fortran],
-  version: meson.project_version(),
-)
-mumps_common_dep = declare_dependency(
-  include_directories: inc_pub,
-  dependencies: [mpi_c_dep, mpi_f_dep, openmp_f_dep, common_deps],
-  link_with: [mumps_common_lib],
-  version: meson.project_version(),
-)
+mumps_common_libs = {}
+
+foreach cfg : mumps_common_build
+  name_suffix = cfg['name_suffix']
+  mpi_c_dep = cfg['mpi_c_dep']
+  mpi_f_dep = cfg['mpi_f_dep']
+  common_deps_cur = cfg['common_deps']
+  common_defs_cur = cfg['common_defs']
+
+  mumps_common_c = static_library(
+    f'mumps_common_c_@name_suffix@',
+    comm_other_c,
+    include_directories: [inc_src, inc_pub],
+    dependencies: [mpi_c_dep, common_deps_cur],
+    pic: true,
+    c_args: [mumps_cflags, common_defs_cur],
+  )
+
+  gemmt_defs = blas_have_gemmt ? ['-DGEMMT_AVAILABLE'] : []
+
+  mumps_common_fortran = static_library(
+    f'mumps_common_fortran_@name_suffix@',
+    [comm_src_fortran, comm_other_fortran],
+    include_directories: [inc_src, inc_pub],
+    dependencies: [mpi_f_dep, openmp_f_dep, common_deps_cur],
+    override_options: ['warning_level=0'],
+    pic: true,
+    fortran_args: [mumps_fflags, common_defs_cur, gemmt_defs],
+  )
+
+  mumps_common_lib = static_library(
+    f'mumps_common_@name_suffix@',
+    include_directories: [inc_src, inc_pub],
+    dependencies: [mpi_c_dep, mpi_f_dep, openmp_f_dep, common_deps_cur],
+    link_whole: [mumps_common_c, mumps_common_fortran],
+  )
+
+  mumps_common_libs += {name_suffix: mumps_common_lib}
+endforeach
+
+mumps_common_lib_seq = mumps_common_libs['seq']
+mumps_common_lib_par = mumps_common_libs['par']
 
 ################################
 # Precision-specific libraries #
 ################################
 
-a_mumps_libs = []
+a_mumps_libs_seq = []
+a_mumps_libs_par = []
+
+cint_src = files('src/mumps_c.c')
+
 foreach a : num_prefixes
   src_fortran = files(
     f'src/@a@ana_aux.F',
@@ -471,58 +518,135 @@ foreach a : num_prefixes
     f'src/@a@tools.F',
     f'src/@a@type3_root.F',
   )
+
   src_c = files(f'src/@a@mumps_gpu.c')
-  cint_src = files('src/mumps_c.c')
 
-  # Per-precision definitions
-  a_defs = [ordering_defs, f'-DMUMPS_ARITH=MUMPS_ARITH_@a@']
+  a_defs_base = [common_defs, f'-DMUMPS_ARITH=MUMPS_ARITH_@a@']
 
-  # GEMMT_AVAILABLE only where the BLAS symbol exists
-  a_gemmt_defs = []
-  if {'s': have_sgemmt, 'd': have_dgemmt, 'c': have_cgemmt, 'z': have_zgemmt}[a]
-    a_gemmt_defs += ['-DGEMMT_AVAILABLE']
-  endif
+  a_gemmt_defs = have_gemmt_map[a] ? ['-DGEMMT_AVAILABLE'] : []
 
-  a_mumps_c_lib = static_library(
-    f'@a@mumps_c',
+  # Sequential variant (libseq, no ScaLAPACK)
+  a_mumps_c_lib_seq = static_library(
+    f'@a@mumps_c_seq',
     [cint_src, src_c],
     include_directories: inc_pub,
-    dependencies: [mpi_c_dep, mumps_common_dep],
+    dependencies: [common_deps],
+    link_with: [mumps_common_lib_seq],
     pic: true,
-    c_args: [mumps_cflags, a_defs],
-  )
-  a_mumps_f_lib = static_library(
-    f'@a@mumps_fortran',
-    src_fortran,
-    include_directories: [inc_src, inc_pub],
-    dependencies: [mpi_f_dep, openmp_f_dep, mumps_common_dep],
-    override_options: ['warning_level=0'],
-    pic: true,
-    fortran_args: [mumps_fflags, a_defs, scalapack_defs, a_gemmt_defs],
+    c_args: [mumps_cflags, a_defs_base],
   )
 
-  a_mumps_lib = library(
-    f'@a@mumps',
-    dependencies: [mpi_f_dep, openmp_f_dep],
-    link_whole: [a_mumps_c_lib, a_mumps_f_lib],
-    version: meson.project_version(),
+  a_mumps_f_lib_seq = static_library(
+    f'@a@mumps_fortran_seq',
+    src_fortran,
+    include_directories: [inc_src, inc_pub],
+    dependencies: [mpi_f_dep_seq, openmp_f_dep, common_deps],
+    link_with: [mumps_common_lib_seq],
+    override_options: ['warning_level=0'],
+    pic: true,
+    fortran_args: [mumps_fflags, a_defs_base, ['-DNOSCALAPACK'], a_gemmt_defs],
   )
-  a_mumps_libs += [a_mumps_c_lib, a_mumps_f_lib]
+
+  a_mumps_libs_seq += [a_mumps_c_lib_seq, a_mumps_f_lib_seq]
+
+  # Parallel variant (real MPI, optional ScaLAPACK)
+  a_defs_par = [a_defs_base, common_defs_par]
+
+  scalapack_defs_par = use_scalapack ? [] : ['-DNOSCALAPACK']
+
+  a_mumps_c_lib_par = static_library(
+    f'@a@mumps_c_par',
+    [cint_src, src_c],
+    include_directories: inc_pub,
+    dependencies: [mpi_c_dep_par, common_deps_par],
+    link_with: [mumps_common_lib_par],
+    pic: true,
+    c_args: [mumps_cflags, a_defs_par],
+  )
+
+  a_mumps_f_lib_par = static_library(
+    f'@a@mumps_fortran_par',
+    src_fortran,
+    include_directories: [inc_src, inc_pub],
+    dependencies: [mpi_f_dep_par, openmp_f_dep, common_deps_par],
+    link_with: [mumps_common_lib_par],
+    override_options: ['warning_level=0'],
+    pic: true,
+    fortran_args: [mumps_fflags, a_defs_par, scalapack_defs_par, a_gemmt_defs],
+  )
+
+  a_mumps_libs_par += [a_mumps_c_lib_par, a_mumps_f_lib_par]
 endforeach
 
 ###########################
 # Aggregate MUMPS library #
 ###########################
 
-mumps_lib = library(
-  'mumps',
-  dependencies: [mpi_f_dep, openmp_f_dep, mumps_common_dep],
-  link_whole: a_mumps_libs,
+mumps_lib_seq = library(
+  'mumps_seq',
+  dependencies: [mpi_f_dep_seq, openmp_f_dep],
+  link_with: [mumps_common_lib_seq],
+  link_whole: a_mumps_libs_seq,
   version: meson.project_version(),
 )
-mumps_dep = declare_dependency(
+
+mumps_dep_seq = declare_dependency(
   include_directories: inc_pub,
-  dependencies: [mpi_c_dep, mpi_f_dep, openmp_f_dep, mumps_common_dep],
-  link_with: mumps_lib,
+  dependencies: [mpi_c_dep_seq, mpi_f_dep_seq, openmp_f_dep, common_deps],
+  link_with: [mumps_lib_seq, mumps_common_lib_seq],
   version: meson.project_version(),
 )
+
+meson.override_dependency('mumps_seq', mumps_dep_seq)
+
+mumps_lib_par = library(
+  'mumps_par',
+  dependencies: [mpi_f_dep_par, openmp_f_dep, common_deps],
+  link_with: [mumps_common_lib_par],
+  link_whole: a_mumps_libs_par,
+  version: meson.project_version(),
+)
+
+mumps_dep_par = declare_dependency(
+  include_directories: inc_pub,
+  dependencies: [mpi_c_dep_par, mpi_f_dep_par, openmp_f_dep, common_deps_par],
+  link_with: [mumps_lib_par, mumps_common_lib_par],
+  version: meson.project_version(),
+)
+
+meson.override_dependency('mumps_par', mumps_dep_par)
+
+########################
+# Hybrid MUMPS library #
+########################
+
+mumps_hybrid_seq_map = meson.current_source_dir() + '/hybrid/src/mumps-seq.map'
+mumps_hybrid_seq_lib = shared_library(
+  'mumps_hybrid_seq',
+  'hybrid/src/mumps-seq.c',
+  include_directories: [inc_pub, 'hybrid/include'],
+  dependencies: [openmp_f_dep, common_deps],
+  link_whole: [libseq_f_lib, a_mumps_libs_seq, mumps_common_lib_seq],
+  link_args: [f'-Wl,--version-script=@mumps_hybrid_seq_map@'],
+  version: meson.project_version(),
+)
+
+mumps_hybrid_par_map = meson.current_source_dir() + '/hybrid/src/mumps-par.map'
+mumps_hybrid_par_lib = shared_library(
+  'mumps_hybrid_par',
+  'hybrid/src/mumps-par.c',
+  include_directories: [inc_pub, 'hybrid/include'],
+  dependencies: [mpi_f_dep_par, openmp_f_dep, common_deps_par],
+  link_whole: [a_mumps_libs_par, mumps_common_lib_par],
+  link_args: [f'-Wl,--version-script=@mumps_hybrid_par_map@'],
+  version: meson.project_version(),
+)
+
+mumps_hybrid_dep = declare_dependency(
+  include_directories: [inc_pub, 'hybrid/include'],
+  dependencies: [mpi_f_dep_par, openmp_f_dep, common_deps_par],
+  link_with: [mumps_hybrid_seq_lib, mumps_hybrid_par_lib],
+  version: meson.project_version(),
+)
+
+meson.override_dependency('mumps_hybrid', mumps_hybrid_dep)

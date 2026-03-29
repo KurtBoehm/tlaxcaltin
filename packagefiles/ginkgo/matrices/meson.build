@@ -5,9 +5,9 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 configure_file(
-  configuration: {'Ginkgo_BINARY_DIR': build_dir},
   input: 'config.hpp.in',
   output: 'config.hpp',
+  configuration: {'Ginkgo_BINARY_DIR': build_dir},
   format: 'cmake@',
 )
 subdir('test')

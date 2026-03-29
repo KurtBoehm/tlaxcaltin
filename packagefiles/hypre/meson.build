@@ -37,9 +37,9 @@ cfg = {
   'HYPRE_FMANGLE_LAPACK': 0,
 }
 configure_file(
-  configuration: cfg,
   input: 'src/config/HYPRE_config.h.cmake.in',
   output: 'HYPRE_config.h',
+  configuration: cfg,
   format: 'cmake@',
 )
 

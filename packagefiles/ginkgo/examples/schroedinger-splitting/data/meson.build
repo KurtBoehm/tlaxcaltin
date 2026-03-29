@@ -5,7 +5,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 configure_file(
-  copy: true,
   input: 'WHERE_ARE_THE_MATRICES',
   output: 'WHERE_ARE_THE_MATRICES',
+  copy: true,
 )

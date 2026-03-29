@@ -205,7 +205,6 @@ deps = [blas_dep, m_dep, metis_dep]
 int_t = 'long long int'
 
 superlu_config = configure_file(
-  format: 'cmake@',
   input: 'SRC/superlu_config.h.in',
   output: 'superlu_config.h',
   configuration: {
@@ -213,6 +212,7 @@ superlu_config = configure_file(
     'HAVE_COLAMD': 1,
     'XSDK_INDEX_SIZE': 64,
   },
+  format: 'cmake@',
 )
 
 superlu_lib = shared_library(

@@ -45,5 +45,5 @@ foreach n : [
   'nontrivial_mc64_example',
   'nontrivial_mc64_result',
 ]
-  configure_file(copy: true, input: f'@n@.mtx', output: f'@n@.mtx')
+  configure_file(input: f'@n@.mtx', output: f'@n@.mtx', copy: true)
 endforeach

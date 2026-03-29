@@ -24,9 +24,9 @@ cfg = {
   'XSDK_INDEX_SIZE': 64,
 }
 configure_file(
-  configuration: cfg,
   input: 'SRC/superlu_dist_config.h.in',
   output: 'superlu_dist_config.h',
+  configuration: cfg,
   format: 'cmake@',
 )
 

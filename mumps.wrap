@@ -14,4 +14,4 @@ patch_directory = mumps
 depth = 1
 
 [provide]
-mumps = mumps_dep
+dependency_names = mumps_seq, mumps_par, mumps_hybrid
