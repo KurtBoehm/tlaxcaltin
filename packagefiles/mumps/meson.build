@@ -4,7 +4,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-# Based largely on https://github.com/scivision/mumps-superbuild
+# Based largely on https://github.com/scivision/mumps-superbuild.
 
 project('MUMPS', 'c', 'fortran', version: '5.8.2')
 
@@ -336,7 +336,7 @@ have_gemmt_map = {
 }
 
 ################################################################################
-# Common dependencies and preprocessor defs
+# Common dependencies and preprocessor definitions
 ################################################################################
 
 common_deps = [pord_dep, lapack_dep, threads_dep]
@@ -464,8 +464,8 @@ endif
 # Precision-specific libraries
 ################################################################################
 
-a_mumps_libs_seq = []
-a_mumps_libs_par = []
+a_mumps_seq_libs = []
+a_mumps_par_libs = []
 
 cint_src = files('src/mumps_c.c')
 
@@ -601,7 +601,7 @@ foreach a : num_prefixes
     fortran_args: [mumps_fflags, a_defs_base, ['-DNOSCALAPACK'], a_gemmt_defs],
   )
 
-  a_mumps_libs_seq += [a_mumps_c_lib_seq, a_mumps_f_lib_seq]
+  a_mumps_seq_libs += [a_mumps_c_lib_seq, a_mumps_f_lib_seq]
 
   if parallel
     # Parallel variant (real MPI, optional ScaLAPACK).
@@ -634,7 +634,7 @@ foreach a : num_prefixes
       ],
     )
 
-    a_mumps_libs_par += [a_mumps_c_lib_par, a_mumps_f_lib_par]
+    a_mumps_par_libs += [a_mumps_c_lib_par, a_mumps_f_lib_par]
   endif
 endforeach
 
@@ -644,9 +644,9 @@ endforeach
 
 mumps_lib_seq = library(
   'mumps_seq',
-  dependencies: [mpi_f_dep_seq],
+  dependencies: [mpi_f_dep_seq, openmp_c_dep],
   link_with: [mumps_common_lib_seq],
-  link_whole: a_mumps_libs_seq,
+  link_whole: a_mumps_seq_libs,
   version: meson.project_version(),
 )
 
@@ -662,9 +662,9 @@ meson.override_dependency('mumps_seq', mumps_dep_seq)
 if parallel
   mumps_lib_par = library(
     'mumps_par',
-    dependencies: [mpi_f_dep_par, common_deps],
+    dependencies: [mpi_f_dep_par, common_deps, openmp_c_dep],
     link_with: [mumps_common_lib_par],
-    link_whole: a_mumps_libs_par,
+    link_whole: a_mumps_par_libs,
     version: meson.project_version(),
   )
 
@@ -686,7 +686,7 @@ mumps_hybrid_build = [
   {
     'suffix': 'seq',
     'deps': [common_deps],
-    'link_whole': [libseq_f_lib, a_mumps_libs_seq, mumps_common_lib_seq],
+    'link_whole': [a_mumps_seq_libs, libseq_f_lib, mumps_common_lib_seq],
   },
 ]
 
@@ -695,7 +695,7 @@ if parallel
     {
       'suffix': 'par',
       'deps': [mpi_f_dep_par, common_deps_par],
-      'link_whole': [a_mumps_libs_par, mumps_common_lib_par],
+      'link_whole': [a_mumps_par_libs, mumps_common_lib_par],
     },
   ]
 endif

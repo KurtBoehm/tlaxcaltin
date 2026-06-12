@@ -9,6 +9,7 @@
 # of the project using Tlaxcaltin.
 
 import re
+from collections import deque
 from pathlib import Path
 from shutil import move, rmtree
 from subprocess import run
@@ -28,30 +29,28 @@ _folder_names: Final = {
     "xmp-toolkit-sdk": "XMP-Toolkit-SDK",
 }
 _wrapdb_names: Final = {"fmt", "google-benchmark", "liblzma", "nlohmann-json"}
+_dep_prefix: Final = "# dependencies: "
 
 
 def _expand_selection(subprojects_path: Path, selection: set[str]) -> set[str]:
-    new_selection: set[str] = set()
-    for s in selection:
-        new_selection.add(s)
-        wrap_path = subprojects_path / f"{s}.wrap"
+    queue = deque(selection)
+    expanded = set(selection)
+    while queue:
+        current = queue.popleft()
+        wrap_path = subprojects_path / f"{current}.wrap"
         if not wrap_path.exists():
             continue
         with open(wrap_path, "r") as f:
             txt = f.read()
-        dependencies_lines = [
-            line for line in txt.splitlines() if line.startswith("# dependencies: ")
-        ]
-        if len(dependencies_lines) == 0:
-            continue
-        dependencies = [
-            d.strip() for line in dependencies_lines for d in line[16:].split(",")
-        ]
-        new_selection = new_selection.union(dependencies)
-    if new_selection != selection:
-        new_selection = _expand_selection(subprojects_path, new_selection)
-        print(f"expanded selection: {new_selection}")
-    return new_selection
+        for line in txt.splitlines():
+            if not line.startswith(_dep_prefix):
+                continue
+            for dep in line[len(_dep_prefix) :].split(","):
+                dep = dep.strip()
+                if dep not in expanded:
+                    expanded.add(dep)
+                    queue.append(dep)
+    return expanded
 
 
 def update(project_path: Path, add: bool):
@@ -144,7 +143,7 @@ def update(project_path: Path, add: bool):
                 if (m := folder_re.fullmatch(line)) is not None:
                     if m.group(1) in fnames:
                         new_gitignore.append(line)
-                else:
+                elif line not in ["__pycache__/"]:
                     new_gitignore.append(line)
             if new_gitignore[-1] == "":
                 new_gitignore.pop()
