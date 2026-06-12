@@ -29,7 +29,7 @@ endif
 
 blas_dep = dependency('blas')
 lapack_dep = dependency('lapack')
-omp_dep = dependency('openmp')
+omp_dep = dependency('openmp', required: false)
 
 subdir('SuiteSparse_config')
 subdir('AMD')

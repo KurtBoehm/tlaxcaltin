@@ -16,7 +16,8 @@ if impl == 'openmpi'
 elif impl == 'mpich'
   mpi_c_dep = dependency('mpich')
   mpi_cpp_dep = mpi_c_dep
-  mpifort = mpi_c_dep.get_variable('prefix') / 'lib' / 'libmpifort.so'
+  mpifort_lib = target_machine.system() == 'darwin' ? 'libmpifort.dylib' : 'libmpifort.so'
+  mpifort = mpi_c_dep.get_variable('prefix') / 'lib' / mpifort_lib
   mpi_fortran_dep = [mpi_c_dep, declare_dependency(link_args: mpifort)]
   mpi_implementation = 'mpich'
 else
@@ -29,7 +30,8 @@ else
     mpi_implementation = 'openmpi'
   else
     mpi_cpp_dep = mpi_c_dep
-    mpifort = mpi_c_dep.get_variable('prefix') / 'lib' / 'libmpifort.so'
+    mpifort_lib = target_machine.system() == 'darwin' ? 'libmpifort.dylib' : 'libmpifort.so'
+    mpifort = mpi_c_dep.get_variable('prefix') / 'lib' / mpifort_lib
     mpi_fortran_dep = [mpi_c_dep, declare_dependency(link_args: mpifort)]
   endif
 endif
