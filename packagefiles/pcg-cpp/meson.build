@@ -16,4 +16,6 @@ import('pkgconfig').generate(
   description: 'PCG Random Number Generation, C++ Edition',
 )
 
-pcg_cpp_dep = declare_dependency(include_directories: include_directories('include'))
+pcg_cpp_dep = declare_dependency(
+  include_directories: include_directories('include'),
+)

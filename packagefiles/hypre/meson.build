@@ -12,7 +12,7 @@ project(
   license: 'Apache-2.0 OR MIT',
 )
 
-# TODO: Support FEI
+# TODO: Support FEI.
 
 cfg = {
   'CMAKE_PROJECT_NAME': 'HYPRE',
@@ -632,5 +632,14 @@ deps = [
   dependency('superlu_dist'),
 ]
 
-hypre_lib = shared_library('hypre', src, include_directories: inc, dependencies: deps)
-hypre_dep = declare_dependency(include_directories: inc, dependencies: deps, link_with: hypre_lib)
+hypre_lib = shared_library(
+  'hypre',
+  src,
+  include_directories: inc,
+  dependencies: deps,
+)
+hypre_dep = declare_dependency(
+  include_directories: inc,
+  dependencies: deps,
+  link_with: hypre_lib,
+)

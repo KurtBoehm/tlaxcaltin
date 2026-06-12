@@ -63,4 +63,7 @@ parmetis_lib = shared_library(
   c_args: ['-DIDXTYPEWIDTH=64', '-DREALTYPEWIDTH=64'],
 )
 
-parmetis_dep = declare_dependency(include_directories: include, link_with: parmetis_lib)
+parmetis_dep = declare_dependency(
+  include_directories: include,
+  link_with: parmetis_lib,
+)

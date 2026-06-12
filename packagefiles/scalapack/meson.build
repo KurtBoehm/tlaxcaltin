@@ -17,31 +17,53 @@ scalapack_version_major = scalapack_version_split[0]
 scalapack_version_minor = scalapack_version_split[1]
 scalapack_version_patch = scalapack_version_split[2]
 
-# build_tests = get_option('test')
+################################################################################
+# Compiler and dependency discovery.
+################################################################################
 
 fc = meson.get_compiler('fortran')
 cc = meson.get_compiler('c')
 
-mpi_c_dep = subproject('mpi').get_variable('mpi_c_dep')
-mpi_f_dep = subproject('mpi').get_variable('mpi_fortran_dep')
+mpi_sub = subproject('mpi')
+mpi_c_dep = mpi_sub.get_variable('mpi_c_dep')
+mpi_f_dep = mpi_sub.get_variable('mpi_fortran_dep')
+
 blas_dep = dependency('blas')
 lapack_dep = dependency('lapack')
+
+scalapack_deps = [mpi_c_dep, mpi_f_dep, lapack_dep, blas_dep]
+
+################################################################################
+# Compiler arguments
+################################################################################
 
 c_args = ['-Wno-error=implicit-function-declaration']
 
 mangletest_lib = static_library('mangletest', 'TOOLS/mangletest.f90')
-if cc.compiles('extern void mangletest_(void); int main(void) { mangletest_(); }')
-  message('Fortran mangling: underscore')
+
+mangle_underscore_test = '''
+extern void mangletest_(void);
+int main(void) { mangletest_(); }
+'''
+
+mangle_uppercase_test = '''
+extern void MANGLETEST(void);
+int main(void) { MANGLETEST(); }
+'''
+
+if cc.compiles(mangle_underscore_test)
+  message('Fortran mangling: underscore.')
   c_args += ['-DAdd_']
-elif cc.compiles('extern void MANGLETEST(void); int main(void) { MANGLETEST(); }')
-  message('Fortran mangling: uppercase')
+elif cc.compiles(mangle_uppercase_test)
+  message('Fortran mangling: uppercase.')
   c_args += ['-DUpCase']
 endif
 
-no_implicit_args = []
-foreach a : fc.get_supported_arguments('-fno-implicit-none')
-  no_implicit_args += a
-endforeach
+fortran_no_implicit_args = fc.get_supported_arguments('-fno-implicit-none')
+
+################################################################################
+# Subdirectories
+################################################################################
 
 subdir('BLACS')
 subdir('TOOLS')
@@ -49,7 +71,10 @@ subdir('PBLAS')
 subdir('REDIST')
 subdir('SRC')
 
-# Single library containing both C and Fortran sources
+################################################################################
+# Library and dependency declaration
+################################################################################
+
 scalapack_lib = library(
   'scalapack',
   [
@@ -65,19 +90,24 @@ scalapack_lib = library(
     src,
     src_c,
   ],
-  dependencies: [mpi_c_dep, mpi_f_dep, lapack_dep, blas_dep],
+  dependencies: scalapack_deps,
   link_whole: [blacs_cint_lib],
   c_args: c_args,
-  fortran_args: no_implicit_args,
+  fortran_args: fortran_no_implicit_args,
   install: true,
   version: scalapack_version,
   soversion: f'@scalapack_version_major@.@scalapack_version_minor@',
 )
+
 scalapack_dep = declare_dependency(
-  dependencies: [mpi_c_dep, mpi_f_dep, lapack_dep, blas_dep],
+  dependencies: scalapack_deps,
   link_with: scalapack_lib,
   version: scalapack_version,
 )
+
+################################################################################
+# Testing.
+################################################################################
 
 # if build_tests
 #   subdir('TESTING')

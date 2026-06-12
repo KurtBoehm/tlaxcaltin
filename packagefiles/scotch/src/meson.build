@@ -8,38 +8,50 @@ flex_prg = find_program('flex', required: false)
 bison_prg = find_program('bison', required: false)
 
 cc = meson.get_compiler('c')
+
 base_deps = [cc.find_library('m', required: false)]
+
 has_posix_timers = cc.compiles(
   '''
   #include <unistd.h>
-  int main() { return _POSIX_TIMERS; }
+
+  int main() {
+    return _POSIX_TIMERS;
+  }
   ''',
 )
+
 clock_gettime_compiles = cc.links(
   '''
   #include <time.h>
+
   int main() {
     struct timespec res;
     return clock_gettime(CLOCK_REALTIME, &res);
   }
   ''',
 )
+
 if has_posix_timers and not clock_gettime_compiles
   base_deps += [cc.find_library('rt')]
 endif
 
 threads_dep = dependency('threads', required: false)
 
+################################################################################
+# Common compiler flags
+################################################################################
+
 c_args += [
   '-Drestrict=__restrict',
   '-DCOMMON_RANDOM_FIXED_SEED',
   '-DSCOTCH_RENAME',
 ]
+
 os = build_machine.system()
 if os == 'darwin'
   c_args += ['-DCOMMON_OS_MACOS', '-D_DARWIN_C_SOURCE']
-endif
-if os == 'windows'
+elif os == 'windows'
   c_args += ['-DCOMMON_OS_WINDOWS']
 endif
 
@@ -49,26 +61,36 @@ if int_size == 32
 elif int_size == 64
   c_args += ['-DINTSIZE64']
 elif int_size != 0
-  error(f'Invalid integer size @int_size@')
+  error(f'Invalid integer size @int_size@.')
 endif
+
+################################################################################
+# Threading support
+################################################################################
 
 use_threads = get_option('threads')
 if use_threads
   assert(
     threads_dep.found(),
-    'Threads were requested, but have not been found!',
+    'Threads were requested, but have not been found.',
   )
+
   c_args += ['-DCOMMON_PTHREAD', '-DSCOTCH_PTHREAD']
 
-  # TODO _GNU_SOURCE
+  # TODO Define “_GNU_SOURCE” when needed.
   affinity_prefix = '''
     #define _GNU_SOURCE
     #include <pthread.h>
   '''
+
   if cc.has_function('pthread_setaffinity_np', prefix: affinity_prefix)
     c_args += ['-DCOMMON_PTHREAD_AFFINITY_LINUX']
   endif
 endif
+
+################################################################################
+# PT-Scotch and MPI
+################################################################################
 
 build_ptscotch = get_option('build_ptscotch')
 if get_option('mpi_implementation') == 'none' and build_ptscotch
@@ -79,11 +101,13 @@ endif
 if build_ptscotch
   force_mpi_multithread = get_option('force_mpi_multithread')
   mpi_dep = subproject('mpi').get_variable('mpi_c_dep')
-  # TODO No oversubscribe check
+
+  # TODO Add oversubscription check.
   if threads_dep.found()
     if force_mpi_multithread
-      assert(threads_dep.found(), 'Threads are required for multithreaded MPI!')
+      assert(threads_dep.found(), 'Threads are required for multithreaded MPI.')
     endif
+
     test_program = '''
       #include <stdio.h>
       #include <stdlib.h>
@@ -96,31 +120,40 @@ if build_ptscotch
         return (prov < MPI_THREAD_MULTIPLE) ? EXIT_FAILURE : EXIT_SUCCESS;
       }
     '''
-    has_mpi_multithread = cc.run(test_program, dependencies: [mpi_dep, threads_dep]).returncode() == 0
+
+    has_mpi_multithread = (
+      cc.run(test_program, dependencies: [mpi_dep, threads_dep]).returncode() == 0
+    )
+
     if force_mpi_multithread
-      assert(has_mpi_multithread, 'Multithreaded MPI does not seem to work!')
+      assert(has_mpi_multithread, 'Multithreaded MPI does not seem to work.')
     endif
+
     if has_mpi_multithread
       c_args += ['-DSCOTCH_PTHREAD_MPI']
     endif
   endif
 endif
 
-# Build Scotch and PT-Scotch libraries
+################################################################################
+# Subdirectories
+################################################################################
+
+# Build Scotch and PT-Scotch libraries.
 subdir('libscotch')
 
-# Build Scotch executables
+# Build Scotch executables.
 # TODO subdir('scotch')
 
-# Build EsMUMPS library
+# Build EsMUMPS library.
 if get_option('build_libesmumps')
   subdir('esmumps')
 endif
 
-# Build ScotchMeTiS library
+# Build ScotchMeTiS library.
 if get_option('build_libscotchmetis')
   subdir('libscotchmetis')
 endif
 
-# Testing
+# Testing.
 # TODO subdir('check')

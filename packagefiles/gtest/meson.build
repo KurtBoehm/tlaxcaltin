@@ -12,7 +12,11 @@ project(
   license: 'BSD-3-Clause',
 )
 
-override_cpp = meson.version().version_compare('>=1.3.0') ? 'cpp_std=gnu++17,c++17' : 'cpp_std=gnu++17'
+if meson.version().version_compare('>=1.3.0')
+  override_cpp = 'cpp_std=gnu++17,c++17'
+else
+  override_cpp = 'cpp_std=gnu++17'
+endif
 
 subdir('googletest')
 

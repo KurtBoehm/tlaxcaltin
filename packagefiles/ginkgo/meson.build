@@ -4,13 +4,11 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-project(
-  'ginkgo',
-  'cpp',
-  'c',
-  version: '1.11.0',
-  license: 'BSD-3-Clause',
-)
+project('ginkgo', 'cpp', 'c', version: '1.11.0', license: 'BSD-3-Clause')
+
+################################################################################
+# Dependencies
+################################################################################
 
 hwloc_dep = dependency('hwloc', required: false)
 metis_dep = dependency('metis')
@@ -24,6 +22,10 @@ if with_mpi
 else
   mpi_dep = []
 endif
+
+################################################################################
+# Configuration
+################################################################################
 
 code = '''
 #include <type_traits>
@@ -51,13 +53,14 @@ cfg = {
   'GINKGO_HAVE_TAU': false,
   'GINKGO_HAVE_VTUNE': false,
   'GINKGO_HAVE_METIS': true,
-  # TODO Make generic?
+  # TODO Make generic.
   'METIS_HEADER': 'metis.h',
   'GINKGO_HAVE_ROCTX': false,
   'GINKGO_BUILD_MPI': with_mpi,
   'GINKGO_HAVE_HWLOC': hwloc_dep.found(),
   'GINKGO_ENABLE_HALF': true,
 }
+
 gko_public_header_contents = '''
 #include <ginkgo/core/base/abstract_factory.hpp>
 #include <ginkgo/core/base/array.hpp>
@@ -206,7 +209,12 @@ gko_public_header_contents = '''
 #include <ginkgo/core/stop/time.hpp>
 #include <ginkgo/core/synthesizer/containers.hpp>
 '''
+
 subdir('include/ginkgo')
+
+################################################################################
+# Sources
+################################################################################
 
 reference_src = [
   'reference/base/batch_multi_vector_kernels.cpp',
@@ -275,6 +283,7 @@ reference_src = [
   'reference/stop/criterion_kernels.cpp',
   'reference/stop/residual_norm_kernels.cpp',
 ]
+
 reference_test_src = {
   'reference/test/base/array.cpp': 0,
   'reference/test/base/batch_multi_vector_kernels.cpp': 0,
@@ -427,6 +436,7 @@ reference_test_src = {
   'test/stop/criterion_kernels.cpp': 0,
   'test/stop/residual_norm_kernels.cpp': 0,
 }
+
 omp_src = [
   'omp/base/batch_multi_vector_kernels.cpp',
   'omp/base/device_matrix_data_kernels.cpp',
@@ -507,6 +517,7 @@ omp_src = [
   'common/unified/solver/minres_kernels.cpp',
   'common/unified/solver/pipe_cg_kernels.cpp',
 ]
+
 omp_test_src = {
   'omp/test/base/index_set.cpp': 0,
   'omp/test/base/kernel_launch.cpp': 0,
@@ -590,6 +601,7 @@ omp_test_src = {
   'test/stop/criterion_kernels.cpp': 0,
   'test/stop/residual_norm_kernels.cpp': 0,
 }
+
 devices_src = [
   'core/device_hooks/cuda_hooks.cpp',
   'core/device_hooks/dpcpp_hooks.cpp',
@@ -602,6 +614,7 @@ devices_src = [
   'devices/omp/executor.cpp',
   'devices/reference/dummy.cpp',
 ]
+
 core_src = [
   'core/base/array.cpp',
   'core/base/batch_multi_vector.cpp',
@@ -715,6 +728,7 @@ core_src = [
   'third_party/SuiteSparse/wrapper32.cpp',
   'third_party/SuiteSparse/wrapper64.cpp',
 ]
+
 core_test_src = {
   'core/test/accessor/block_col_major.cpp': 0,
   'core/test/accessor/index_span.cpp': 0,
@@ -852,6 +866,10 @@ core_test_src = {
   'core/test/utils/value_generator_test.cpp': 0,
 }
 
+################################################################################
+# MPI extensions
+################################################################################
+
 if with_mpi
   reference_src += [
     'reference/distributed/assembly_kernels.cpp',
@@ -861,6 +879,7 @@ if with_mpi
     'reference/distributed/partition_kernels.cpp',
     'reference/distributed/vector_kernels.cpp',
   ]
+
   reference_test_src += {
     'reference/test/distributed/assembly_kernels.cpp': 3,
     'reference/test/distributed/index_map_kernels.cpp': 3,
@@ -883,6 +902,7 @@ if with_mpi
     'test/mpi/preconditioner/schwarz.cpp': 3,
     'test/mpi/solver/solver.cpp': 3,
   }
+
   omp_src += [
     'omp/distributed/assembly_kernels.cpp',
     'omp/distributed/index_map_kernels.cpp',
@@ -894,6 +914,7 @@ if with_mpi
     'common/unified/distributed/partition_helpers_kernels.cpp',
     'common/unified/distributed/partition_kernels.cpp',
   ]
+
   omp_test_src += {
     'test/distributed/assembly_kernels.cpp': 3,
     'test/distributed/index_map_kernels.cpp': 3,
@@ -910,6 +931,7 @@ if with_mpi
     'test/mpi/preconditioner/schwarz.cpp': 3,
     'test/mpi/solver/solver.cpp': 3,
   }
+
   core_src += [
     'core/base/mpi.cpp',
     'core/config/schwarz_config.cpp',
@@ -927,6 +949,7 @@ if with_mpi
     'core/distributed/vector.cpp',
     'core/mpi/exception.cpp',
   ]
+
   core_test_src += {
     'core/test/distributed/index_map.cpp': 3,
     'core/test/mpi/base/bindings.cpp': 4,
@@ -943,12 +966,17 @@ if with_mpi
   }
 endif
 
+################################################################################
+# Libraries and dependency
+################################################################################
+
 reference_lib = library(
   'ginkgo_reference',
   reference_src,
   include_directories: include_directories('include'),
   cpp_args: ['-DGKO_DEVICE_NAMESPACE=reference'],
 )
+
 omp_lib = library(
   'ginkgo_omp',
   omp_src,
@@ -956,6 +984,7 @@ omp_lib = library(
   dependencies: omp_dep,
   cpp_args: ['-DGKO_COMPILING_OMP', '-DGKO_DEVICE_NAMESPACE=omp'],
 )
+
 ginkgo_lib = library(
   'ginkgo',
   core_src + devices_src,
@@ -963,17 +992,25 @@ ginkgo_lib = library(
   dependencies: [hwloc_dep, metis_dep, mpi_dep],
   link_with: [omp_lib, reference_lib],
 )
+
 ginkgo_dep = declare_dependency(
   include_directories: include_directories('include'),
   dependencies: [metis_dep, mpi_dep, omp_dep],
   link_with: [ginkgo_lib, omp_lib, reference_lib],
 )
 
+################################################################################
+# Examples
+################################################################################
+
 if get_option('examples')
   subdir('examples')
 endif
 
-# tests
+################################################################################
+# Tests
+################################################################################
+
 if get_option('tests')
   gtest_dep = dependency('gtest')
   ginkgo_test_srcs = [
@@ -983,6 +1020,7 @@ if get_option('tests')
 
   build_dir = meson.current_build_dir()
   subdir('matrices')
+
   foreach cpp, pnum : reference_test_src
     is_mpi = pnum > 0
     if not is_mpi or with_mpi
@@ -1009,6 +1047,7 @@ if get_option('tests')
       endif
     endif
   endforeach
+
   foreach cpp, pnum : omp_test_src
     is_mpi = pnum > 0
     if not is_mpi or with_mpi
@@ -1036,6 +1075,7 @@ if get_option('tests')
       endif
     endif
   endforeach
+
   foreach cpp, pnum : core_test_src
     is_mpi = pnum > 0
     if not is_mpi or with_mpi

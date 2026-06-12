@@ -4,6 +4,10 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+################################################################################
+# Sources
+################################################################################
+
 sources = [
   'areig/complex/acompgre.cc',
   'areig/complex/acompgsh.cc',
@@ -115,7 +119,7 @@ sources = [
   'superlu/sym/lsymgshf.cc',
   'superlu/sym/lsymreg.cc',
   'superlu/sym/lsymshf.cc',
-  # TODO Do not compile, as stated in the readme
+  # TODO Do not compile, as stated in the read-me.
   # 'umfpack/complex/ucompgre.cc',
   # 'umfpack/complex/ucompgsh.cc',
   # 'umfpack/complex/ucompreg.cc',
@@ -134,23 +138,32 @@ sources = [
   'umfpack/sym/usymshf.cc',
 ]
 
+################################################################################
+# Includes
+################################################################################
+
 test_inc = [
   include_directories('areig'),
   include_directories('matprod'),
   include_directories('matprod/complex'),
   include_directories('matprod/nonsym'),
   include_directories('matprod/sym'),
-  include_directories('matrices/complex/'),
+  include_directories('matrices/complex'),
   include_directories('matrices/nonsym'),
   include_directories('matrices/sym'),
 ]
 
+################################################################################
+# Tests
+################################################################################
+
 foreach file : sources
   name = file.split('/')[-1].substring(0, -3)
+
   test(
     name,
     executable(
-      name + '-test',
+      f'@name@-test',
       file,
       include_directories: test_inc,
       dependencies: [arpackpp_dep],

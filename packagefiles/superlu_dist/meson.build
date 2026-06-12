@@ -256,5 +256,14 @@ deps = [
   subproject('suitesparse').get_variable('colamd_dep'),
 ]
 
-superlu_dist_lib = shared_library('superlu_dist', src, include_directories: inc, dependencies: deps)
-superlu_dist_dep = declare_dependency(include_directories: inc, dependencies: deps, link_with: superlu_dist_lib)
+superlu_dist_lib = shared_library(
+  'superlu_dist',
+  src,
+  include_directories: inc,
+  dependencies: deps,
+)
+superlu_dist_dep = declare_dependency(
+  include_directories: inc,
+  dependencies: deps,
+  link_with: superlu_dist_lib,
+)

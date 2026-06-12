@@ -4,7 +4,15 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+################################################################################
+# CombBLAS library
+################################################################################
+
 project('combblas', 'cpp', default_options: ['warning_level=1'])
+
+# ==============================================================================
+# Sources and includes
+# ==============================================================================
 
 src = [
   'src/CommGrid.cpp',
@@ -13,6 +21,7 @@ src = [
   'src/MPIOp.cpp',
   'src/MPIType.cpp',
 ]
+
 inc = [
   include_directories('Applications/BipartiteMatchings'),
   include_directories('graph500-1.2/generator/include'),
@@ -20,9 +29,29 @@ inc = [
   include_directories('psort-1.0/include'),
   include_directories('usort/include'),
 ]
+
+# ==============================================================================
+# Dependencies
+# ==============================================================================
+
 mpi_dep = subproject('mpi').get_variable('mpi_cpp_dep')
-assert(mpi_dep.found(), 'MPI not found!')
+assert(mpi_dep.found(), 'MPI not found.')
+
 deps = [mpi_dep]
 
-combblas_lib = shared_library('combblas', src, include_directories: inc, dependencies: deps)
-combblas_dep = declare_dependency(include_directories: inc, dependencies: deps, link_with: combblas_lib)
+# ==============================================================================
+# Library
+# ==============================================================================
+
+combblas_lib = shared_library(
+  'combblas',
+  src,
+  include_directories: inc,
+  dependencies: deps,
+)
+
+combblas_dep = declare_dependency(
+  include_directories: inc,
+  dependencies: deps,
+  link_with: combblas_lib,
+)
