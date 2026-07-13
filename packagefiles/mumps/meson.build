@@ -149,7 +149,12 @@ endif
 ################################################################################
 
 openmp_c_dep = use_openmp ? dependency('openmp', language: 'c') : []
-openmp_f_dep = use_openmp ? dependency('openmp', language: 'fortran') : []
+if use_openmp
+  openmp_f_dep = dependency('openmp', language: 'fortran')
+  openmp_f_dep = openmp_f_dep.partial_dependency(compile_args: true)
+else
+  openmp_f_dep = []
+endif
 
 ################################################################################
 # mumps_int_def.h generation
