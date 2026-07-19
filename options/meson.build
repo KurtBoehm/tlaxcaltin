@@ -18,7 +18,7 @@ msvc_warnings = [
   '/permissive-',
   # All reasonable warnings.
   '/W4',
-  # “identifier”: Conversion from “type1” to “type1”, possible loss of data.
+  # “identifier”: Conversion from “type1” to “type2”, possible loss of data.
   '/w14242',
   # “operator”: Conversion from “type1:field_bits” to “type2:field_bits”, possible loss of data.
   '/w14254',
@@ -49,7 +49,7 @@ msvc_warnings = [
   '/w14619',
   # Enable warning on thread unsafe static member initialization.
   '/w14640',
-  # Conversion from “type1” to “type_2” is sign-extended.
+  # Conversion from “type1” to “type2” is sign-extended.
   # This may cause unexpected runtime behavior.
   '/w14826',
   # Wide string literal cast to “LPSTR”.
@@ -80,6 +80,8 @@ clang_warnings = [
   '-Wunused',
   # Warn if you overload (not override) a virtual function.
   '-Woverloaded-virtual',
+  # Warn when the override keyword is missing.
+  '-Wsuggest-override',
   # Warn on type conversions that may lose data.
   '-Wconversion',
   # Warn on sign conversions.
@@ -94,6 +96,8 @@ clang_warnings = [
   '-Wformat=2',
   # Warn when case statements fall-through.
   '-Wimplicit-fallthrough',
+  # Warn on stray semicolons.
+  '-Wextra-semi',
 ]
 
 gcc_warnings = clang_warnings + [
@@ -159,6 +163,12 @@ fix_args = []
 if target_machine.system() == 'windows'
   # Debug builds on Windows may fail because there are too many sections in the object file.
   fix_args += ['-Wa,-mbig-obj']
+endif
+if compiler_id == 'gcc' and target_machine.cpu_family() == 'aarch64'
+  # GCC on AArch64 emits ABI-change notes (e.g. for parameter passing changes
+  # between C++14 and C++17) that are only relevant when mixing binaries built
+  # with different GCC versions; suppress them as noise.
+  fix_args += ['-Wno-psabi']
 endif
 
 # Determine architecture-specific optimizations.
