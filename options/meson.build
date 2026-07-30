@@ -173,7 +173,15 @@ endif
 
 # Determine architecture-specific optimizations.
 optimization_args = []
-if is_gcc_compatible and compiler.compiles(
+if target_machine.system() == 'darwin' and target_machine.cpu_family() == 'aarch64'
+  # Apple Clang’s "-march=native"/"-mcpu=native" do not perform real host feature detection on
+  # Apple Silicon (unlike e.g. GCC’s "-march=native" on Linux, which reads the host CPUID): they
+  # resolve to a reduced, generic baseline that is missing extensions every Apple Silicon chip
+  # actually supports, such as the FP16 extension. Passing no "-march"/"-mcpu" at all instead lets
+  # Clang fall back to its default target CPU for "arm64-apple-macosx", which already selects the
+  # correct, fully-featured Apple Silicon baseline, so `optimization_args` is intentionally left
+  # empty here.
+elif is_gcc_compatible and compiler.compiles(
   'int dummy;',
   name: 'Check “-march=native” support',
   args: ['-march=native'],
