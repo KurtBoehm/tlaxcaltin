@@ -1,2 +1,4 @@
+colorama
+keyring
+pydantic
 PyGithub
-secretstorage

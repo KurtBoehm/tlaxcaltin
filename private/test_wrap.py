@@ -96,10 +96,10 @@ match body:
             body.url,
             pkg_folder,
         ]
-        run(clone_cmd)
+        run(clone_cmd, check=True)
 
         if body.revision.lower() != "head":
-            run(["git", "checkout", body.revision], cwd=pkg_folder)
+            run(["git", "checkout", body.revision], cwd=pkg_folder, check=True)
 
 # Apply patch directory
 patch_base_path = base_path / "packagefiles" / body.patch_directory

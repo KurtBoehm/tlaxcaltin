@@ -4,18 +4,17 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+import getpass
 from argparse import ArgumentParser
 from configparser import ConfigParser
-from contextlib import closing
-import getpass
 from hashlib import sha256
 from pathlib import Path
 
+import keyring
 from colorama import Fore
 from github import Auth, Github
 from pydantic import BaseModel
 from requests import get
-from secretstorage import dbus_init, get_default_collection
 
 
 class Args(BaseModel):
@@ -36,18 +35,9 @@ args = Args.model_validate(vars(parser.parse_args()))
 
 password = args.password
 if password is None:
-    with closing(dbus_init()) as connection:
-        collection = get_default_collection(connection)
-        items = [
-            item
-            for item in collection.get_all_items()
-            if item.get_label().startswith(f"GitHub {args.user_name}")
-        ]
-        if items:
-            [item] = items
-            password = item.get_secret().decode()
-        else:
-            password = getpass.getpass("Password: ")
+    password = keyring.get_password("GitHub", args.user_name)
+    if not password:
+        password = getpass.getpass("Password: ")
 
 gh = Github(auth=Auth.Login(args.user_name, password))
 del password

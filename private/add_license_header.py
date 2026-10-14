@@ -8,7 +8,6 @@ from collections.abc import Iterable
 from pathlib import Path
 from typing import Final
 
-
 header: Final = """# This file is part of https://github.com/KurtBoehm/tlaxcaltin.
 #
 # This Source Code Form is subject to the terms of the Mozilla Public
